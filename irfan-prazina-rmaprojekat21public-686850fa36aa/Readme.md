@@ -8,7 +8,7 @@ Ne mijenjajte naziv aplikacije niti početnih paketa.
 
 | Ime i prezime  | Index  | Grupa     |
 |----------------|--------|-----------|
-| Mirza Kadrić    | 12345  | PON 09:00 |
+| Mirza Kadrić    | 18713  | ČET 13:00 |
 
 &nbsp;
 
