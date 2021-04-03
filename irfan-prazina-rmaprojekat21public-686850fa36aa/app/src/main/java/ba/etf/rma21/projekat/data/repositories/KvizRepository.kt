@@ -1,17 +1,19 @@
 package ba.etf.rma21.projekat.data.repositories
 
+import ba.etf.rma21.projekat.data.*
+import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Kviz
+import ba.etf.rma21.projekat.data.models.Predmet
+import ba.etf.rma21.projekat.data.repositories.KvizRepository.Companion.neupisaniKvizovi
 
 class KvizRepository {
 
     companion object {
-        // TODO: Implementirati
-        init {
-            // TODO: Implementirati
+        var upisaniKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
+        var neupisaniKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
         }
 
         fun getMyKvizes(): List<Kviz> {
-            // TODO: Implementirati
             return emptyList()
         }
 
@@ -35,5 +37,4 @@ class KvizRepository {
             return emptyList()
         }
         // TODO: Implementirati i ostale potrebne metode
-    }
 }
