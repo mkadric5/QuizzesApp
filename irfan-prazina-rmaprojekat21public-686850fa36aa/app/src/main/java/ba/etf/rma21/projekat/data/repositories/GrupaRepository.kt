@@ -6,21 +6,29 @@ import ba.etf.rma21.projekat.data.upisaneGrupe
 
 class GrupaRepository {
     companion object {
-        var upisaneGrupe: MutableList<Grupa> = upisaneGrupe().toMutableList()
-        var neupisaneGrupe: MutableList<Grupa> = neupisaneGrupe().toMutableList()
+        var mojeGrupe: MutableList<Grupa> = upisaneGrupe().toMutableList()
+        var ostaleGrupe: MutableList<Grupa> = neupisaneGrupe().toMutableList()
         init {
             // TODO: Implementirati
         }
 
         fun getGroupsByPredmet(nazivPredmeta: String): List<Grupa> {
-           val grupeZaPredmet: MutableList<Grupa> = upisaneGrupe.filter{
+           val grupeZaPredmet: MutableList<Grupa> = mojeGrupe.filter{
                grupa -> grupa.nazivPredmeta == nazivPredmeta
            }.toMutableList()
 
-            grupeZaPredmet.addAll(neupisaneGrupe.filter {
+            grupeZaPredmet.addAll(ostaleGrupe.filter {
                 grupa -> grupa.nazivPredmeta == nazivPredmeta
             })
             return grupeZaPredmet
+        }
+
+        fun upisiUGrupu(naziv: String) {
+            val g = ostaleGrupe.find{ grupa -> grupa.naziv == naziv}
+            if (g != null){
+                mojeGrupe.add(g)
+            }
+            ostaleGrupe.remove(g)
         }
     }
 }

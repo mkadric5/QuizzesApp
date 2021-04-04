@@ -6,8 +6,8 @@ import ba.etf.rma21.projekat.data.upisaniPredmeti
 
 class PredmetRepository {
     companion object {
-        var upisaniPredmeti: MutableList<Predmet> = upisaniPredmeti().toMutableList()
-        var neupisaniPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
+        var mojiPredmeti: MutableList<Predmet> = upisaniPredmeti().toMutableList()
+        var ostaliPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
 
         fun getUpisani(): List<Predmet> {
             return upisaniPredmeti()
@@ -15,11 +15,18 @@ class PredmetRepository {
 
         fun getAll(): List<Predmet> {
             val sviPredmeti: MutableList<Predmet> = mutableListOf()
-            sviPredmeti.addAll(upisaniPredmeti)
-            sviPredmeti.addAll(neupisaniPredmeti)
+            sviPredmeti.addAll(mojiPredmeti)
+            sviPredmeti.addAll(ostaliPredmeti)
             return sviPredmeti
         }
-        // TODO: Implementirati i ostale potrebne metode
+
+        fun upisiNaPredmet(naziv: String) {
+            val p = ostaliPredmeti.find { predmet -> predmet.naziv == naziv }
+            if (p != null) {
+                mojiPredmeti.add(p)
+            }
+            ostaliPredmeti.remove(p)
+        }
     }
 
 }

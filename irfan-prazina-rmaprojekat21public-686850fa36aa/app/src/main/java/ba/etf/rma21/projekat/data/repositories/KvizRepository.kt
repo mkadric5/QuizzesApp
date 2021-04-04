@@ -4,37 +4,42 @@ import ba.etf.rma21.projekat.data.*
 import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.data.models.Predmet
-import ba.etf.rma21.projekat.data.repositories.KvizRepository.Companion.neupisaniKvizovi
+import java.util.*
 
 class KvizRepository {
 
     companion object {
-        var upisaniKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
-        var neupisaniKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
-        }
+        var mojiKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
+        var ostaliKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
 
         fun getMyKvizes(): List<Kviz> {
-            return emptyList()
+            return mojiKvizovi
         }
 
         fun getAll(): List<Kviz> {
-            // TODO: Implementirati
-            return emptyList()
+            val sviKvizovi: MutableList<Kviz> = mojiKvizovi.toMutableList()
+            sviKvizovi.addAll(ostaliKvizovi)
+            return sviKvizovi
         }
 
         fun getDone(): List<Kviz> {
-            // TODO: Implementirati
-            return emptyList()
+            return mojiKvizovi.filter { kviz -> kviz.datumRada != null && kviz.osvojeniBodovi != null }
         }
 
         fun getFuture(): List<Kviz> {
-            // TODO: Implementirati
-            return emptyList()
+            return mojiKvizovi.filter { kviz -> kviz.datumPocetka > Calendar.getInstance().time }
         }
 
         fun getNotTaken(): List<Kviz> {
-            // TODO: Implementirati
-            return emptyList()
+            return mojiKvizovi.filter { kviz -> kviz.datumKraj < Calendar.getInstance().time && kviz.datumRada == null }
         }
-        // TODO: Implementirati i ostale potrebne metode
+
+        fun dodajKviz(naziv: String) {
+            val k = ostaliKvizovi.find { kviz -> kviz.naziv == naziv }
+            if (k != null) {
+                mojiKvizovi.add(k)
+            }
+            ostaliKvizovi.remove(k)
+        }
+    }
 }
