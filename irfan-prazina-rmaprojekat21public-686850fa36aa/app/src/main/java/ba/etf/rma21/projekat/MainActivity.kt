@@ -1,5 +1,8 @@
 package ba.etf.rma21.projekat
 
+import android.R.attr
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,12 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.size
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -69,7 +73,7 @@ class KvizAdapter(
             viewHolder.bodoviNaKvizu.text = dataSet[position].osvojeniBodovi.toString()
         else viewHolder.bodoviNaKvizu.text = ""
 
-        //bind slike kolora sa view- om
+        //bind slike kolora sa view- om i bind datuma sa textview-om
         val datumPocetka = dataSet[position].datumPocetka
         val datumKraja = dataSet[position].datumKraj
         val datumRada = dataSet[position].datumRada
@@ -78,33 +82,24 @@ class KvizAdapter(
 
         val context = viewHolder.slikaKviza.context
 
-        val c = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
-        if (osvojeniBodovi != null) {
-            c.time = datumRada
+        if (osvojeniBodovi != null && datumRada != null) {
             bojaKviza = "plava"
-            viewHolder.datumKviza.text = c.get(Calendar.DAY_OF_MONTH).toString().plus(
-                    "." + c.get(Calendar.MONTH).toString() + "." + c.get(Calendar.YEAR).toString())
+            viewHolder.datumKviza.text = dateFormat.format(datumRada)
         }
         else if (datumKraja > Calendar.getInstance().time && Calendar.getInstance().time > datumPocetka) {
-            c.time = datumKraja
             bojaKviza = "zelena"
-            viewHolder.datumKviza.text = c.get(Calendar.DAY_OF_MONTH).toString().plus(
-                    "." + c.get(Calendar.MONTH).toString() + "." + c.get(Calendar.YEAR).toString())
+            viewHolder.datumKviza.text = dateFormat.format(datumKraja)
         }
 
         else if (datumPocetka > Calendar.getInstance().time) {
-            c.time = datumPocetka
             bojaKviza = "zuta"
-            viewHolder.datumKviza.text = c.get(Calendar.DAY_OF_MONTH).toString().plus(
-                    "." + c.get(Calendar.MONTH).toString() + "." + c.get(Calendar.YEAR).toString()
-            )
+            viewHolder.datumKviza.text = dateFormat.format(datumPocetka)
         }
         else {
-            c.time = datumKraja
             bojaKviza = "crvena"
-            viewHolder.datumKviza.text = c.get(Calendar.DAY_OF_MONTH).toString().plus(
-                    "." + c.get(Calendar.MONTH).toString() + "." + c.get(Calendar.YEAR).toString())
+            viewHolder.datumKviza.text = dateFormat.format(datumKraja)
         }
 
         val id: Int = context.resources.getIdentifier(bojaKviza,"drawable", context.packageName)
@@ -122,10 +117,11 @@ class KvizAdapter(
 class MainActivity : AppCompatActivity() {
     private lateinit var filterKvizova: Spinner
     private lateinit var listaKvizova: RecyclerView
+    private lateinit var upisButton: FloatingActionButton
     private lateinit var kvizAdapter: KvizAdapter
-    private lateinit var arrayAdapter: ArrayAdapter<String>
+    private lateinit var filterKvizovaAdapter: ArrayAdapter<String>
     private var kvizListViewModel = KvizListViewModel()
-
+    private val LAUNCH_SECOND_ACTIVITY: Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,13 +130,15 @@ class MainActivity : AppCompatActivity() {
 
         filterKvizova = findViewById(R.id.filterKvizova)
         listaKvizova = findViewById(R.id.listaKvizova)
+        upisButton = findViewById(R.id.upisDugme)
 
-        arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+        filterKvizovaAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
         listOf("Svi moji kvizovi","Svi kvizovi","Urađeni kvizovi","Budući kvizovi","Prošli kvizovi(neurađeni)"))
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        filterKvizova.adapter = arrayAdapter
+        filterKvizovaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        filterKvizova.adapter = filterKvizovaAdapter
 
-        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove())
+        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}))
         listaKvizova.layoutManager = GridLayoutManager(this,2)
         listaKvizova.addItemDecoration(SpaceItemDecoration(5))
 
@@ -155,28 +153,66 @@ class MainActivity : AppCompatActivity() {
                 updateLista(filterKvizova.selectedItem.toString())
             }
         }
+
+        upisButton.setOnClickListener {
+            showUpisPredmeta()
+        }
+    }
+
+    private fun showUpisPredmeta() {
+        val intent = Intent(this, UpisPredmet::class.java).apply {
+        }
+        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                val predmet: String? = data?.getStringExtra("predmet")
+                val grupa: String? = data?.getStringExtra("grupa")
+
+                if (predmet != null && grupa != null){
+                        kvizListViewModel.upisiKorisnika(grupa,predmet)
+                        kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove())
+                        listaKvizova.adapter = kvizAdapter
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+            }
+        }
     }
 
     private fun updateLista(filterNaziv: String) {
         when(filterNaziv) {
             "Svi moji kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove().sortedWith(
+                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
+                ))
                 listaKvizova.adapter = kvizAdapter
             }
             "Svi kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove().sortedWith(
+                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
+                ))
                 listaKvizova.adapter = kvizAdapter
             }
             "Urađeni kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove().sortedWith(
+                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
+                ))
                 listaKvizova.adapter = kvizAdapter
             }
             "Budući kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove().sortedWith(
+                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
+                ))
                 listaKvizova.adapter = kvizAdapter
             }
             "Prošli kvizovi(neurađeni)" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove().sortedWith(
+                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
+                ))
                 listaKvizova.adapter = kvizAdapter
             }
         }

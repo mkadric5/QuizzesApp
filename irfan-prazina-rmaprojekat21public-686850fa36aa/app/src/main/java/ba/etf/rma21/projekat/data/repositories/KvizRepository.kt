@@ -34,8 +34,9 @@ class KvizRepository {
             return mojiKvizovi.filter { kviz -> kviz.datumKraj < Calendar.getInstance().time && kviz.datumRada == null }
         }
 
-        fun dodajKviz(naziv: String) {
-            val k = ostaliKvizovi.find { kviz -> kviz.naziv == naziv }
+        fun dodajKviz(grupaNaziv: String, predmetNaziv: String) {
+            val k = ostaliKvizovi.find { kviz -> kviz.nazivPredmeta == predmetNaziv &&
+                    kviz.nazivGrupe == grupaNaziv }
             if (k != null) {
                 mojiKvizovi.add(k)
             }

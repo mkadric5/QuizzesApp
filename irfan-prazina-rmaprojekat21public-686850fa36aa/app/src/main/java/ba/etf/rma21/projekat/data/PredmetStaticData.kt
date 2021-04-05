@@ -4,7 +4,6 @@ import ba.etf.rma21.projekat.data.models.Predmet
 
 fun neupisaniPredmeti(): List<Predmet> {
     return listOf(
-           Predmet("IM1", 1),
            Predmet("TP", 1),
            Predmet("MLTI",1)
     )
@@ -12,6 +11,7 @@ fun neupisaniPredmeti(): List<Predmet> {
 
 fun upisaniPredmeti(): List<Predmet> {
     return listOf(
+            Predmet("IM1", 1),
             Predmet("IM2", 1)
     )
 }

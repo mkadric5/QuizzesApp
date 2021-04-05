@@ -27,9 +27,9 @@ class KvizListViewModel {
         return KvizRepository.getNotTaken()
     }
 
-    fun updateData(nazivKviza: String, nazivGrupe: String, nazivPredmeta: String) {
-        KvizRepository.dodajKviz(nazivKviza)
-        GrupaRepository.upisiUGrupu(nazivGrupe)
-        PredmetRepository.upisiNaPredmet(nazivPredmeta)
+    fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {
+        KvizRepository.dodajKviz(grupaNaziv, predmetNaziv)
+        GrupaRepository.upisiUGrupu(grupaNaziv)
+        PredmetRepository.upisiNaPredmet(predmetNaziv)
     }
 }
