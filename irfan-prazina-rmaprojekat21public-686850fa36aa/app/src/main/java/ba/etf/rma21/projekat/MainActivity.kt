@@ -1,6 +1,5 @@
 package ba.etf.rma21.projekat
 
-import android.R.attr
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
@@ -45,7 +44,7 @@ class KvizAdapter(
             // Definisanje akcija na elemente
             nazivPredmeta = view.findViewById(R.id.nazivPredmeta)
             slikaKviza = view.findViewById(R.id.slikaKviza)
-            nazivKviza = view.findViewById(R.id.nazivKviza)
+            nazivKviza = view.findViewById(R.id.naziv)
             datumKviza = view.findViewById(R.id.datumKviza)
             trajanjeKviza = view.findViewById(R.id.trajanjeKviza)
             bodoviNaKvizu = view.findViewById(R.id.bodoviNaKvizu)
@@ -133,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         upisButton = findViewById(R.id.upisDugme)
 
         filterKvizovaAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-        listOf("Svi moji kvizovi","Svi kvizovi","Urađeni kvizovi","Budući kvizovi","Prošli kvizovi(neurađeni)"))
+        listOf("Svi moji kvizovi","Svi kvizovi","Urađeni kvizovi","Budući kvizovi","Prošli kvizovi"))
         filterKvizovaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterKvizova.adapter = filterKvizovaAdapter
 

@@ -31,13 +31,13 @@ fun upisaniKvizovi(): List<Kviz> {
 
 
 return listOf(
-        Kviz("k1","IM2",datumPocetka, //aktivan i uradjeni kviz
+        Kviz("IM2 kviz 1","IM2",datumPocetka, //aktivan i uradjeni kviz
                 datumKraja,datumRada,5, "IM2 grupa 1",5F),
-        Kviz("k1","IM1",datumPocetka, //aktivan i neuradjen kviz
+        Kviz("IM1 kviz 1","IM1",datumPocetka, //aktivan i neuradjen kviz
                datumKraja,null,10, "IM1 grupa 1",null),
-        Kviz("k1","IM1",datumPocetka2, //kviz koji ce tek biti aktivan
+        Kviz("IM1 kviz 2","IM1",datumPocetka2, //kviz koji ce tek biti aktivan
                 datumKraja2,null,5, "IM1 grupa 2",null),
-        Kviz("k1","IM2",datumPocetka3,
+        Kviz("IM2 kviz 2","IM2",datumPocetka3,
                 datumKraja3,null,5, "IM2 grupa 2",null)
 )
 }
@@ -65,13 +65,13 @@ fun neupisaniKvizovi(): List<Kviz> {
     val datumKraja3 = c.time
 
     return listOf(
-            Kviz("k1","TP",datumPocetka,
+            Kviz("TP kviz 1","TP",datumPocetka,
                     datumKraja,null,5, "TP grupa 1",null),
-            Kviz("k1","TP",datumPocetka2,
+            Kviz("TP kviz 2","TP",datumPocetka2,
                     datumKraja2,null,5, "TP grupa 2",null),
-            Kviz("k1","MLTI",datumPocetka3,
+            Kviz("MLTI kviz 1","MLTI",datumPocetka3,
                     datumKraja3,null,5, "MLTI grupa 1",null),
-            Kviz("k1","MLTI",datumPocetka3,
+            Kviz("MLTI kviz 2","MLTI",datumPocetka3,
                     datumKraja3,null,5, "MLTI grupa 2",null)
     )
 }
