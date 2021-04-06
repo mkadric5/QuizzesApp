@@ -29,7 +29,7 @@ class KvizListViewModel {
 
     fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {
         KvizRepository.dodajKviz(grupaNaziv, predmetNaziv)
-        GrupaRepository.upisiUGrupu(grupaNaziv)
+        GrupaRepository.upisiUGrupu(grupaNaziv, predmetNaziv)
         PredmetRepository.upisiNaPredmet(predmetNaziv)
     }
 }

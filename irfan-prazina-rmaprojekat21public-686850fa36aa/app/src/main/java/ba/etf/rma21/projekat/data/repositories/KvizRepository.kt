@@ -1,16 +1,15 @@
 package ba.etf.rma21.projekat.data.repositories
 
-import ba.etf.rma21.projekat.data.*
-import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Kviz
-import ba.etf.rma21.projekat.data.models.Predmet
+import ba.etf.rma21.projekat.data.neupisaniKvizovi
+import ba.etf.rma21.projekat.data.upisaniKvizovi
 import java.util.*
 
 class KvizRepository {
 
     companion object {
-        var mojiKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
-        var ostaliKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
+        private var mojiKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
+        private var ostaliKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
 
         fun getMyKvizes(): List<Kviz> {
             return mojiKvizovi

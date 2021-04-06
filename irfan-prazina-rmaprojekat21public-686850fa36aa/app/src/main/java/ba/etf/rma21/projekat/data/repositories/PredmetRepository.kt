@@ -6,11 +6,20 @@ import ba.etf.rma21.projekat.data.upisaniPredmeti
 
 class PredmetRepository {
     companion object {
-        var mojiPredmeti: MutableList<Predmet> = upisaniPredmeti().toMutableList()
-        var ostaliPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
+        private var mojiPredmeti: MutableList<Predmet> = upisaniPredmeti().toMutableList()
+        private var ostaliPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
 
         fun getUpisani(): List<Predmet> {
             return upisaniPredmeti()
+        }
+
+        fun getPredmetsByGodina(godina:Int) : List<Predmet> {
+            return getAll().filter { predmet -> predmet.godina == godina }
+        }
+
+        fun dajOstalePredmeteZaGodinu(godina: Int) : List<String> {
+            return ostaliPredmeti.filter { predmet -> predmet.godina == godina }.map {
+                predmet -> predmet.naziv }
         }
 
         fun getAll(): List<Predmet> {

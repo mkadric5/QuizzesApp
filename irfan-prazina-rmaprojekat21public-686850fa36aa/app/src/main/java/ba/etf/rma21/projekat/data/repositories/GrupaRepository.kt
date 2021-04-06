@@ -6,8 +6,8 @@ import ba.etf.rma21.projekat.data.upisaneGrupe
 
 class GrupaRepository {
     companion object {
-        var mojeGrupe: MutableList<Grupa> = upisaneGrupe().toMutableList()
-        var ostaleGrupe: MutableList<Grupa> = neupisaneGrupe().toMutableList()
+        private var mojeGrupe: MutableList<Grupa> = upisaneGrupe().toMutableList()
+        private var ostaleGrupe: MutableList<Grupa> = neupisaneGrupe().toMutableList()
         init {
             // TODO: Implementirati
         }
@@ -23,8 +23,9 @@ class GrupaRepository {
             return grupeZaPredmet
         }
 
-        fun upisiUGrupu(naziv: String) {
-            val g = ostaleGrupe.find{ grupa -> grupa.naziv == naziv}
+        fun upisiUGrupu(nazivGrupa: String, nazivPredmet: String) {
+            val g = ostaleGrupe.find{ grupa -> grupa.naziv == nazivGrupa &&
+                    grupa.nazivPredmeta == nazivPredmet}
             if (g != null){
                 mojeGrupe.add(g)
             }

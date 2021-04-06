@@ -37,12 +37,19 @@ class UpisPredmet : AppCompatActivity() {
         odabirGodinaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         odabirGodina.adapter = odabirGodinaAdapter
 
+        odabirGodina.setSelection(odabirGodinaAdapter.getPosition(intent.getStringExtra("default_godina")))
+
         odabirGodina.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 popuniPredmeteZaGodinu(odabirGodina.selectedItem.toString())
+                // ako nema predmeta za datu godinu, onda nema ni grupa
+                if (odabirPredmet.count == 0){
+                       dodajPredmetButton.isEnabled = false
+                       popuniGrupeZaPredmet("")
+                } else dodajPredmetButton.isEnabled = true
             }
         }
 
@@ -52,6 +59,7 @@ class UpisPredmet : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 popuniGrupeZaPredmet(odabirPredmet.selectedItem.toString())
+                dodajPredmetButton.isEnabled = odabirGrupa.count != 0
             }
         }
 
@@ -61,6 +69,7 @@ class UpisPredmet : AppCompatActivity() {
             val grupaItem = odabirGrupa.selectedItem
             if (godinaItem != null && predmetItem != null && grupaItem != null) {
                 val returnIntent = Intent()
+                returnIntent.putExtra("godina",godinaItem.toString())
                 returnIntent.putExtra("predmet",predmetItem.toString())
                 returnIntent.putExtra("grupa",grupaItem.toString())
                 setResult(Activity.RESULT_OK, returnIntent)
@@ -71,7 +80,7 @@ class UpisPredmet : AppCompatActivity() {
 
     private fun popuniGrupeZaPredmet(predmet: String) {
         odabirGrupaAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-        upisPredmetaViewModel.dajGrupeZaPredmet(predmet))
+                upisPredmetaViewModel.dajGrupeZaPredmet(predmet))
         odabirGrupaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         odabirGrupa.adapter = odabirGrupaAdapter
     }
@@ -79,7 +88,7 @@ class UpisPredmet : AppCompatActivity() {
     private fun popuniPredmeteZaGodinu(godina: String) {
         val brGodine = Integer.parseInt(godina)
         odabirPredmetAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-                upisPredmetaViewModel.dajPredmeteZaGodinu(brGodine))
+                upisPredmetaViewModel.dajOPredmeteZaGodinu(brGodine))
         odabirPredmetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         odabirPredmet.adapter = odabirPredmetAdapter
     }

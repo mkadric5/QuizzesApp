@@ -18,7 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+// Za ljepsi prored i razmak medju elementima u recyclerview-u
 class SpaceItemDecoration(private val spaceHeight: Int) : ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView,
                                 state: RecyclerView.State) {
@@ -79,8 +79,6 @@ class KvizAdapter(
         val osvojeniBodovi = dataSet[position].osvojeniBodovi
         val bojaKviza: String
 
-        val context = viewHolder.slikaKviza.context
-
         val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
         if (osvojeniBodovi != null && datumRada != null) {
@@ -101,6 +99,7 @@ class KvizAdapter(
             viewHolder.datumKviza.text = dateFormat.format(datumKraja)
         }
 
+        val context = viewHolder.slikaKviza.context
         val id: Int = context.resources.getIdentifier(bojaKviza,"drawable", context.packageName)
         viewHolder.slikaKviza.setImageResource(id)
     }
@@ -109,7 +108,7 @@ class KvizAdapter(
 
     fun updateDataSet(noviKvizovi: List<Kviz>) {
         dataSet = noviKvizovi
-        //notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 }
 
@@ -121,6 +120,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var filterKvizovaAdapter: ArrayAdapter<String>
     private var kvizListViewModel = KvizListViewModel()
     private val LAUNCH_SECOND_ACTIVITY: Int = 1
+    private var zadnjaOdabranaGodina: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +140,6 @@ class MainActivity : AppCompatActivity() {
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}))
         listaKvizova.layoutManager = GridLayoutManager(this,2)
         listaKvizova.addItemDecoration(SpaceItemDecoration(5))
-
         listaKvizova.adapter = kvizAdapter
         //kvizAdapter.notifyDataSetChanged()
 
@@ -160,6 +159,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showUpisPredmeta() {
         val intent = Intent(this, UpisPredmet::class.java).apply {
+            putExtra("default_godina", zadnjaOdabranaGodina)
         }
         startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
     }
@@ -170,11 +170,11 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 val predmet: String? = data?.getStringExtra("predmet")
                 val grupa: String? = data?.getStringExtra("grupa")
-
+                zadnjaOdabranaGodina = data?.getStringExtra("godina")
                 if (predmet != null && grupa != null){
                         kvizListViewModel.upisiKorisnika(grupa,predmet)
                         kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove())
-                        listaKvizova.adapter = kvizAdapter
+                        filterKvizova.setSelection(filterKvizovaAdapter.getPosition("Svi moji kvizovi"))
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -188,31 +188,26 @@ class MainActivity : AppCompatActivity() {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove().sortedWith(
                         Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
                 ))
-                listaKvizova.adapter = kvizAdapter
             }
             "Svi kvizovi" -> {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove().sortedWith(
                         Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
                 ))
-                listaKvizova.adapter = kvizAdapter
             }
             "Urađeni kvizovi" -> {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove().sortedWith(
                         Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
                 ))
-                listaKvizova.adapter = kvizAdapter
             }
             "Budući kvizovi" -> {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove().sortedWith(
                         Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
                 ))
-                listaKvizova.adapter = kvizAdapter
             }
-            "Prošli kvizovi(neurađeni)" -> {
+            "Prošli kvizovi" -> {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove().sortedWith(
                         Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
                 ))
-                listaKvizova.adapter = kvizAdapter
             }
         }
     }
