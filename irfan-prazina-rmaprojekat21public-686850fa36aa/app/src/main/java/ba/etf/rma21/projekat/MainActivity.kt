@@ -136,8 +136,7 @@ class MainActivity : AppCompatActivity() {
         filterKvizovaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterKvizova.adapter = filterKvizovaAdapter
 
-        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove().sortedWith(
-                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}))
+        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove())
         listaKvizova.layoutManager = GridLayoutManager(this,2)
         listaKvizova.addItemDecoration(SpaceItemDecoration(5))
         listaKvizova.adapter = kvizAdapter
@@ -185,29 +184,19 @@ class MainActivity : AppCompatActivity() {
     private fun updateLista(filterNaziv: String) {
         when(filterNaziv) {
             "Svi moji kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove().sortedWith(
-                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
-                ))
+                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeKvizove())
             }
             "Svi kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove().sortedWith(
-                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
-                ))
+                kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove())
             }
             "Urađeni kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove().sortedWith(
-                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
-                ))
+                kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove())
             }
             "Budući kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove().sortedWith(
-                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
-                ))
+                kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove())
             }
             "Prošli kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove().sortedWith(
-                        Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)}
-                ))
+                kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove())
             }
         }
     }

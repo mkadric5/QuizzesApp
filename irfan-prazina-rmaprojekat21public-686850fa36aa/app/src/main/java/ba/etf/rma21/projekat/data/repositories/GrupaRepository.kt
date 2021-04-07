@@ -23,6 +23,10 @@ class GrupaRepository {
             return grupeZaPredmet
         }
 
+        fun getMojeGrupe(): List<Grupa> {
+            return mojeGrupe
+        }
+
         fun upisiUGrupu(nazivGrupa: String, nazivPredmet: String) {
             val g = ostaleGrupe.find{ grupa -> grupa.naziv == nazivGrupa &&
                     grupa.nazivPredmeta == nazivPredmet}

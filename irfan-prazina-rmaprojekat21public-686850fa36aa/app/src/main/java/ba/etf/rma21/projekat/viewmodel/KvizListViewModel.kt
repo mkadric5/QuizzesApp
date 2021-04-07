@@ -8,23 +8,28 @@ import ba.etf.rma21.projekat.data.repositories.PredmetRepository
 class KvizListViewModel {
 
     fun dajMojeKvizove(): List<Kviz> {
-        return KvizRepository.getMyKvizes()
+        return KvizRepository.getMyKvizes().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
     fun dajSveKvizove(): List<Kviz> {
-        return KvizRepository.getAll()
+        return KvizRepository.getAll().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
     fun dajUradjeneKvizove(): List<Kviz> {
-        return KvizRepository.getDone()
+        return KvizRepository.getDone().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
     fun dajBuduceKvizove(): List<Kviz> {
-        return KvizRepository.getFuture()
+        return KvizRepository.getFuture().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
     fun dajNeuradjeneKvizove(): List<Kviz> {
-        return KvizRepository.getNotTaken()
+        return KvizRepository.getNotTaken().sortedWith(
+                Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
     fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {

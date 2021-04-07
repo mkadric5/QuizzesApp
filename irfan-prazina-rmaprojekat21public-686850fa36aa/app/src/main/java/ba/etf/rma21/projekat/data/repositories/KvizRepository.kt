@@ -15,6 +15,10 @@ class KvizRepository {
             return mojiKvizovi
         }
 
+        fun getOstaliKvizovi(): List<Kviz> {
+            return ostaliKvizovi
+        }
+
         fun getAll(): List<Kviz> {
             val sviKvizovi: MutableList<Kviz> = mojiKvizovi.toMutableList()
             sviKvizovi.addAll(ostaliKvizovi)

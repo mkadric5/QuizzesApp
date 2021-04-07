@@ -10,7 +10,7 @@ class PredmetRepository {
         private var ostaliPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
 
         fun getUpisani(): List<Predmet> {
-            return upisaniPredmeti()
+            return mojiPredmeti
         }
 
         fun getPredmetsByGodina(godina:Int) : List<Predmet> {
