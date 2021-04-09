@@ -190,13 +190,13 @@ class MainActivity : AppCompatActivity() {
                 kvizAdapter.updateDataSet(kvizListViewModel.dajSveKvizove())
             }
             "Urađeni kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajUradjeneKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeUradjeneKvizove())
             }
             "Budući kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajBuduceKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeBuduceKvizove())
             }
             "Prošli kvizovi" -> {
-                kvizAdapter.updateDataSet(kvizListViewModel.dajNeuradjeneKvizove())
+                kvizAdapter.updateDataSet(kvizListViewModel.dajMojeNeuradjeneKvizove())
             }
         }
     }

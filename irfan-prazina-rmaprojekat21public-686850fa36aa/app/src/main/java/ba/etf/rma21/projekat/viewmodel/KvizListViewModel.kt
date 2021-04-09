@@ -17,18 +17,18 @@ class KvizListViewModel {
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
-    fun dajUradjeneKvizove(): List<Kviz> {
-        return KvizRepository.getDone().sortedWith(
+    fun dajMojeUradjeneKvizove(): List<Kviz> {
+        return KvizRepository.getMyDone().sortedWith(
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
-    fun dajBuduceKvizove(): List<Kviz> {
-        return KvizRepository.getFuture().sortedWith(
+    fun dajMojeBuduceKvizove(): List<Kviz> {
+        return KvizRepository.getMyFuture().sortedWith(
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
-    fun dajNeuradjeneKvizove(): List<Kviz> {
-        return KvizRepository.getNotTaken().sortedWith(
+    fun dajMojeNeuradjeneKvizove(): List<Kviz> {
+        return KvizRepository.getMyNotTaken().sortedWith(
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
