@@ -26,26 +26,14 @@ class KvizRepository {
         }
 
         fun getDone(): List<Kviz> {
-            return getAll().filter { kviz -> kviz.datumRada != null && kviz.osvojeniBodovi != null }
-        }
-
-        fun getMyDone(): List<Kviz> {
             return mojiKvizovi.filter { kviz -> kviz.datumRada != null && kviz.osvojeniBodovi != null }
         }
 
         fun getFuture(): List<Kviz> {
-            return getAll().filter { kviz -> kviz.datumPocetka > Calendar.getInstance().time }
-        }
-
-        fun getMyFuture(): List<Kviz> {
             return mojiKvizovi.filter { kviz -> kviz.datumPocetka > Calendar.getInstance().time }
         }
 
         fun getNotTaken(): List<Kviz> {
-            return getAll().filter { kviz -> kviz.datumKraj < Calendar.getInstance().time && kviz.datumRada == null }
-        }
-
-        fun getMyNotTaken(): List<Kviz> {
             return mojiKvizovi.filter { kviz -> kviz.datumKraj < Calendar.getInstance().time && kviz.datumRada == null }
         }
 
