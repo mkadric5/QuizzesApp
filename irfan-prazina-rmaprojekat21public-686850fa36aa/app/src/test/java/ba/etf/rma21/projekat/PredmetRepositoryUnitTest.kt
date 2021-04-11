@@ -9,7 +9,7 @@ import org.hamcrest.core.IsIterableContaining.hasItem
 import org.junit.Assert.*
 import org.junit.Test
 
-class PredmetRepositoryTest {
+class PredmetRepositoryUnitTest {
 
     @Test
     fun getUpisaniPredmetiTest() {

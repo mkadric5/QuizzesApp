@@ -10,7 +10,7 @@ import org.junit.Test
 import org.hamcrest.CoreMatchers.`is` as Is
 
 
-class GrupaRepositoryTest {
+class GrupaRepositoryUnitTest {
 
     @Test
     fun getGroupsByPredmetTest1() {

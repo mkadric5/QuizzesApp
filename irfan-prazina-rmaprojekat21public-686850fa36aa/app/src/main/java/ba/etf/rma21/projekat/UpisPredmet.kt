@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import ba.etf.rma21.projekat.viewmodel.UpisPredmetaViewModel
+import ba.etf.rma21.projekat.viewmodel.UpisPredmetViewModel
 
 
 class UpisPredmet : AppCompatActivity() {
@@ -20,7 +20,7 @@ class UpisPredmet : AppCompatActivity() {
     private lateinit var odabirGodinaAdapter: ArrayAdapter<String>
     private lateinit var odabirPredmetAdapter: ArrayAdapter<String>
     private lateinit var odabirGrupaAdapter: ArrayAdapter<String>
-    private var upisPredmetaViewModel = UpisPredmetaViewModel()
+    private var upisPredmetaViewModel = UpisPredmetViewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

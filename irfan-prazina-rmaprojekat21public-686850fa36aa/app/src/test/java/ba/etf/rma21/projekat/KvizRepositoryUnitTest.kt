@@ -11,7 +11,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is` as Is
 
-class KvizRepositoryTest {
+class KvizRepositoryUnitTest {
 
     @Test
     fun getMyKvizesTest() {
