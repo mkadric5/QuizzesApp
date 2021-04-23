@@ -10,6 +10,8 @@ class KvizRepository {
     companion object {
         private var mojiKvizovi: MutableList<Kviz> = upisaniKvizovi().toMutableList()
         private var ostaliKvizovi: MutableList<Kviz> = neupisaniKvizovi().toMutableList()
+        private var uradjeniKvizovi: MutableList<Kviz> = upisaniKvizovi().filter {
+            kviz -> kviz.datumRada != null && kviz.osvojeniBodovi != null }.toMutableList()
 
         fun getMyKvizes(): List<Kviz> {
             return mojiKvizovi
@@ -26,7 +28,7 @@ class KvizRepository {
         }
 
         fun getDone(): List<Kviz> {
-            return mojiKvizovi.filter { kviz -> kviz.datumRada != null && kviz.osvojeniBodovi != null }
+            return uradjeniKvizovi
         }
 
         fun getFuture(): List<Kviz> {
@@ -44,6 +46,19 @@ class KvizRepository {
                 mojiKvizovi.add(k)
             }
             ostaliKvizovi.remove(k)
+        }
+
+        fun oznaciKaoUradjen(kviz: Kviz, bodovi: Float){
+            val k = mojiKvizovi.find { kv -> kv.naziv == kviz.naziv }
+            k!!.osvojeniBodovi = bodovi
+            k.datumRada = Calendar.getInstance().time
+            uradjeniKvizovi.add(k)
+        }
+
+        fun getKviz(nazivKviza: String): Kviz{
+            return getAll().find {
+                it.naziv == nazivKviza
+            }!!
         }
     }
 }

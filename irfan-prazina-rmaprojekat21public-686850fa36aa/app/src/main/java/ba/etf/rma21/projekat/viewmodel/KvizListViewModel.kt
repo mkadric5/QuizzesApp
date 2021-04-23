@@ -32,9 +32,11 @@ class KvizListViewModel {
                 Comparator { k1, k2 -> k1.datumPocetka.compareTo(k2.datumPocetka)})
     }
 
-    fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {
-        KvizRepository.dodajKviz(grupaNaziv, predmetNaziv)
-        GrupaRepository.upisiUGrupu(grupaNaziv, predmetNaziv)
-        PredmetRepository.upisiNaPredmet(predmetNaziv)
+    fun oznaciKvizKaoUradjen(kviz: Kviz, bodovi: Float) {
+        KvizRepository.oznaciKaoUradjen(kviz,bodovi)
+    }
+
+    fun dajKviz(nazivKviza: String): Kviz {
+        return KvizRepository.getKviz(nazivKviza)
     }
 }

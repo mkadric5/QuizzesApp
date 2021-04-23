@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_kvizovi"
+        android:icon="@android:drawable/btn_star_big_off"
+        android:title="Kvizovi"/>
+    <item
+        android:id="@+id/navigation_predmeti"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="Predmeti"/>
+    <item
+        android:id="@+id/navigation_predaj"
+        android:icon="@android:drawable/button_onoff_indicator_on"
+        android:title="Predaj kviz" />
+    <item
+        android:id="@+id/navigation_zaustavi"
+        android:icon="@android:drawable/ic_delete"
+        android:title="Zaustavi kviz" />
+</menu>
