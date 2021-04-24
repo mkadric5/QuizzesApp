@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.R
 
-class PorukaFragment(private val poruka: String): Fragment() {
+class FragmentPoruka(private val poruka: String): Fragment() {
     private lateinit var textPoruka: TextView
 
 
@@ -22,6 +22,6 @@ class PorukaFragment(private val poruka: String): Fragment() {
     }
 
     companion object {
-        fun newInstance(poruka: String): PorukaFragment = PorukaFragment(poruka)
+        fun newInstance(poruka: String): FragmentPoruka = FragmentPoruka(poruka)
     }
 }

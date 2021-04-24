@@ -89,7 +89,7 @@ class KvizAdapter(
         viewHolder.slikaKviza.setImageResource(id)
 
         viewHolder.itemView.setOnClickListener{
-            if (bojaKviza == "zelena" || bojaKviza == "plava")
+            if (bojaKviza == "zelena" || bojaKviza == "plava" || bojaKviza == "crvena")
             listener(dataSet[position])
         }
     }

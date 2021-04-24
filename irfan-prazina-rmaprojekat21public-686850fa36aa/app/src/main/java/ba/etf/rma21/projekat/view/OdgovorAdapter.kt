@@ -23,11 +23,11 @@ private val pitanje: Pitanje,private var needToBeDisabled: Boolean):
         val pitanjeKviz = pitanjaKvizViewModel.dajPitanjeKvizZaPitanje(pitanje)
         val kviz = kvizListViewModel.dajKviz(pitanjeKviz.kviz)
 
-//        if (kviz.datumRada != null && kviz.osvojeniBodovi != null) {
-//            if (tekstOdgovor.text == elements[pitanje.tacan])
-//                tekstOdgovor.setBackgroundColor(Color.parseColor("#3DDC84"))
-//            needToBeDisabled = true
-//        }
+        if (kviz.datumRada != null && kviz.osvojeniBodovi != null) {
+            if (tekstOdgovor.text == elements[pitanje.tacan])
+                tekstOdgovor.setBackgroundColor(Color.parseColor("#3DDC84"))
+            needToBeDisabled = true
+        }
 
         if (pitanjeKviz.odgovor != null) {
             if (tekstOdgovor.text == elements[pitanjeKviz.odgovor!!]) {
@@ -51,10 +51,6 @@ private val pitanje: Pitanje,private var needToBeDisabled: Boolean):
         }
 
         return view
-    }
-
-    fun getNeedToBeDisabled(): Boolean {
-        return needToBeDisabled
     }
 
     fun odgovoreno(): Boolean {

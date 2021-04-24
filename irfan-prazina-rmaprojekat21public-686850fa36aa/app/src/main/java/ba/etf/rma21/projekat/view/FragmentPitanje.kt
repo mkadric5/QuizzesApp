@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.Pitanje
 
-class PitanjeFragment(
+class FragmentPitanje(
         private val pitanje: Pitanje
 ): Fragment() {
     private lateinit var tekstPitanja: TextView
@@ -44,6 +44,6 @@ class PitanjeFragment(
 //    }
 
     companion object {
-        fun newInstance(pitanje: Pitanje): PitanjeFragment = PitanjeFragment(pitanje)
+        fun newInstance(pitanje: Pitanje): FragmentPitanje = FragmentPitanje(pitanje)
     }
 }

@@ -6,15 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.viewmodel.UpisPredmetViewModel
 
-class PredmetiFragment(
-    private var lastGodina:Int  = 0,
-    private var lastPredmet:Int = 0,
-    private var lastGrupa:Int = 0
-): Fragment() {
+class FragmentPredmeti: Fragment() {
     private lateinit var odabirGodina: Spinner
     private lateinit var odabirPredmet: Spinner
     private lateinit var odabirGrupa: Spinner
@@ -23,7 +18,16 @@ class PredmetiFragment(
     private lateinit var odabirPredmetAdapter: ArrayAdapter<String>
     private lateinit var odabirGrupaAdapter: ArrayAdapter<String>
     private var upisPredmetViewModel = UpisPredmetViewModel()
+    private var lastGodina: Int = 0
+    private var lastPredmet: Int = 0
+    private var lastGrupa: Int = 0
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        lastGodina = odabirGodina.selectedItemPosition
+        lastPredmet = odabirPredmet.selectedItemPosition
+        lastGrupa = odabirGrupa.selectedItemPosition
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.predmeti_fragment, container, false)
@@ -38,14 +42,8 @@ class PredmetiFragment(
         odabirGodinaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         odabirGodina.adapter = odabirGodinaAdapter
 
-//        odabirPredmet.setSelection(lastPredmet)
-//        odabirGrupa.setSelection(lastGrupa)
+        odabirGodina.setSelection(lastGodina)
 
-//        if (savedInstanceState != null) {
-//            odabirGodina.setSelection(savedInstanceState.getInt("godina"))
-//            odabirPredmet.setSelection(savedInstanceState.getInt("predmet"))
-//            odabirGrupa.setSelection(savedInstanceState.getInt("grupa"))
-//        }
 
 //        odabirGodina.setSelection(odabirGodinaAdapter.getPosition(intent.getStringExtra("default_godina")))
 
@@ -55,10 +53,13 @@ class PredmetiFragment(
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 popuniPredmeteZaGodinu(odabirGodina.selectedItem.toString())
-                // ako nema predmeta za datu godinu, onda nema ni grupa
+                odabirPredmet.setSelection(lastPredmet)
+                // ako nema predmeta za datu godinu, onda nema
+                // ni grupa
                 if (odabirPredmet.count == 0){
                     dodajPredmetButton.isEnabled = false
                     popuniGrupeZaPredmet("")
+                    odabirGrupa.setSelection(lastGrupa)
                 } else dodajPredmetButton.isEnabled = true
             }
         }
@@ -69,6 +70,7 @@ class PredmetiFragment(
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 popuniGrupeZaPredmet(odabirPredmet.selectedItem.toString())
+                odabirGrupa.setSelection(lastGrupa)
                 dodajPredmetButton.isEnabled = odabirGrupa.count != 0
             }
         }
@@ -81,8 +83,8 @@ class PredmetiFragment(
                 upisPredmetViewModel.upisiKorisnika(grupaItem.toString(),predmetItem.toString())
 //                (activity as MainActivity).showPorukaFragment(
 //                        "Uspješno ste upisani u grupu ${grupaItem} predmeta ${predmetItem}!")
-                val porukaFragment = PorukaFragment.newInstance(
-                        "Uspješno ste upisani u grupu ${grupaItem} predmeta ${predmetItem}!")
+                val porukaFragment = FragmentPoruka.newInstance(
+                        "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
                 openPorukaFragment(porukaFragment)
             }
         }
@@ -90,7 +92,7 @@ class PredmetiFragment(
     }
 
     companion object {
-        fun newInstance(): PredmetiFragment = PredmetiFragment()
+        fun newInstance(): FragmentPredmeti = FragmentPredmeti()
     }
 
     private fun openPorukaFragment(porukaFragment: Fragment) {

@@ -23,6 +23,7 @@
         android:layout_marginEnd="8dp"
         android:background="#FFFFFF"
         app:itemBackground="@color/black"
+        app:itemTextColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/framePitanje"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,68 +1,46 @@
 package ba.etf.rma21.projekat
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import ba.etf.rma21.projekat.data.models.Kviz
-import ba.etf.rma21.projekat.view.KvizoviFragment
-import ba.etf.rma21.projekat.view.PokusajFragment
-import ba.etf.rma21.projekat.view.PorukaFragment
-import ba.etf.rma21.projekat.view.PredmetiFragment
+import ba.etf.rma21.projekat.view.FragmentKvizovi
+import ba.etf.rma21.projekat.view.FragmentPokusaj
+import ba.etf.rma21.projekat.view.FragmentPredmeti
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
-//    private lateinit var kvizoviFragment: KvizoviFragment
-//    private lateinit var predmetiFragment: PredmetiFragment
-//    private lateinit var porukaFragment: PorukaFragment
-//    private lateinit var pokusajFragment: PokusajFragment
-//    private lateinit var trenutniMainFragment: Fragment
     private var kvizListViewModel = KvizListViewModel()
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
-            R.id.navigation_kvizovi -> {
-                 val kvizoviFragment = KvizoviFragment.newInstance()
+            R.id.kvizovi -> {
+                 val kvizoviFragment = FragmentKvizovi.newInstance()
                 openFragment(kvizoviFragment,"kvizovi")
                 hidePokusajItems()
-//                supportFragmentManager.beginTransaction().hide(trenutniMainFragment).show(kvizoviFragment).commit()
-//                trenutniMainFragment = kvizoviFragment
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_predmeti -> {
-                 val predmetiFragment = PredmetiFragment.newInstance()
+            R.id.predmeti -> {
+                 val predmetiFragment = FragmentPredmeti.newInstance()
                 openFragment(predmetiFragment,"predmeti")
                 hidePokusajItems()
-//                supportFragmentManager.beginTransaction().hide(trenutniMainFragment).show(predmetiFragment).commit()
-//                trenutniMainFragment = predmetiFragment
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_zaustavi -> {
-                supportFragmentManager.fragments.last()
-                val kvizoviFragment = KvizoviFragment.newInstance()
+            R.id.zaustaviKviz -> {
+//                supportFragmentManager.fragments.last()
+                val kvizoviFragment = FragmentKvizovi.newInstance()
                 openFragment(kvizoviFragment,"kvizovi")
                 hidePokusajItems()
             }
-            R.id.navigation_predaj -> {
-                val pokusajFragment = supportFragmentManager.fragments.last() as PokusajFragment
+            R.id.predajKviz -> {
+                val pokusajFragment = supportFragmentManager.fragments.last() as FragmentPokusaj
                 val kviz = pokusajFragment.dajKviz()
-//                val procentTacnost = pokusajFragment.dajTacnost()
                 val bodovi = pokusajFragment.dajBodove()
-//                val porukaFragment = PorukaFragment.newInstance(
-//                        "Završili ste kviz ${kviz.naziv} sa tačnosti ${procentTacnost}")
                 kvizListViewModel.oznaciKvizKaoUradjen(kviz,bodovi)
                 pokusajFragment.openporukaFragment()
                 hidePokusajItems()
-//                val transaction = supportFragmentManager.beginTransaction()
-//                transaction.replace(R.id.container,porukaFragment,"poruka")
-//                transaction.addToBackStack(null)
-//                transaction.commit()
             }
         }
         false
@@ -76,50 +54,16 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-//        bottomNavigation.setOnNavigationItemSelectedListener {item ->
-//            when (item.itemId) {
-//                R.id.navigation_kvizovi -> {
-////                val kvizoviFragment = KvizoviFragment.newInstance()
-////                openFragment(kvizoviFragment,"kvizovi")
-//                    obrisiPorukaFragment()
-//                    supportFragmentManager.beginTransaction().hide(trenutniMainFragment).show(kvizoviFragment).commit()
-//                    trenutniMainFragment = kvizoviFragment
-//                    return@setOnNavigationItemSelectedListener true
-//                }
-//                R.id.navigation_predmeti -> {
-////                val predmetiFragment = PredmetiFragment.newInstance()
-////                openFragment(predmetiFragment,"predmeti")
-//                    obrisiPorukaFragment()
-//                    supportFragmentManager.beginTransaction().hide(trenutniMainFragment).show(predmetiFragment).commit()
-//                    trenutniMainFragment = predmetiFragment
-//                    return@setOnNavigationItemSelectedListener true
-//                }
-////                R.id.navigation_predaj -> {
-////
-////                }
-//            }
-//            false
-//        }
-//        kvizoviFragment = KvizoviFragment.newInstance()
-//        predmetiFragment = PredmetiFragment.newInstance()
-//        porukaFragment = PorukaFragment.newInstance()
-//        trenutniMainFragment = kvizoviFragment
-//        supportFragmentManager.beginTransaction().apply {
-//            add(R.id.container,kvizoviFragment).hide(kvizoviFragment)
-//            add(R.id.container,predmetiFragment).hide(predmetiFragment)
-//            add(R.id.container,porukaFragment).hide(porukaFragment)
-//        }.commit()
-
         //Default fragment
-        bottomNavigation.selectedItemId = R.id.navigation_kvizovi
+        bottomNavigation.selectedItemId = R.id.kvizovi
 //        val kvizoviFragment = KvizoviFragment.newInstance()
 //        openFragment(kvizoviFragment,"kvizovi")
 
-        bottomNavigation.menu.findItem(R.id.navigation_predaj).isVisible = false
-        bottomNavigation.menu.findItem(R.id.navigation_zaustavi).isVisible = false
+        bottomNavigation.menu.findItem(R.id.predajKviz).isVisible = false
+        bottomNavigation.menu.findItem(R.id.zaustaviKviz).isVisible = false
     }
 
-    private fun openFragment(fragment: Fragment, tag: String) {
+     private fun openFragment(fragment: Fragment, tag: String) {
         val transaction = supportFragmentManager.beginTransaction()
 //        if (fragment is KvizoviFragment
 //                && supportFragmentManager.findFragmentByTag("kvizovi") == null
@@ -128,13 +72,18 @@ class MainActivity : AppCompatActivity() {
 ////                || supportFragmentManager.backStackEntryCount == 2
 //        )
         val naStacku = supportFragmentManager.findFragmentByTag(tag)
-        if (naStacku == null){
-            transaction.replace(R.id.container,fragment,tag)
-            transaction.addToBackStack(tag)
-        }
+                if (naStacku == null){
+                    transaction.replace(R.id.container,fragment,tag)
+                    transaction.addToBackStack(tag)
+                }
+                else
+                    transaction.replace(R.id.container,naStacku,tag)
+                transaction.commit()
 //        else supportFragmentManager.popBackStackImmediate(tag,0)
-        else transaction.replace(R.id.container,naStacku,tag)
-        transaction.commit()
+//        else {
+//            transaction.replace(R.id.container,naStacku,tag)
+//        }
+//        transaction.commit()
     }
 
     override fun onBackPressed() {
@@ -145,16 +94,16 @@ class MainActivity : AppCompatActivity() {
 //            bottomNavigation.selectedItemId = R.id.navigation_kvizovi
 //        } else finish()
         val trenutni = supportFragmentManager.fragments.last()
-        if (trenutni is KvizoviFragment)
+        if (trenutni is FragmentKvizovi)
             finish()
-        else if (trenutni is PokusajFragment &&
+        else if (trenutni is FragmentPokusaj &&
                 trenutni.getFragmentiPitanja().any {
                     it.odgovoreno()
                 } && trenutni.childFragmentManager.findFragmentByTag("zavrsen kviz") == null) {
                     trenutni.vratiNaProsloPitanje()
             }
         else
-            bottomNavigation.selectedItemId = R.id.navigation_kvizovi
+            bottomNavigation.selectedItemId = R.id.kvizovi
 
 
 //        if (trenutniMainFragment != kvizoviFragment)
@@ -163,32 +112,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showPokusajItems() {
-        bottomNavigation.menu.findItem(R.id.navigation_predaj).isVisible = true
-        bottomNavigation.menu.findItem(R.id.navigation_zaustavi).isVisible = true
-        bottomNavigation.menu.findItem(R.id.navigation_kvizovi).isVisible = false
-        bottomNavigation.menu.findItem(R.id.navigation_predmeti).isVisible = false
+        bottomNavigation.menu.findItem(R.id.predajKviz).isVisible = true
+        bottomNavigation.menu.findItem(R.id.zaustaviKviz).isVisible = true
+        bottomNavigation.menu.findItem(R.id.kvizovi).isVisible = false
+        bottomNavigation.menu.findItem(R.id.predmeti).isVisible = false
     }
 
     fun hidePokusajItems() {
-        bottomNavigation.menu.findItem(R.id.navigation_predaj).isVisible = false
-        bottomNavigation.menu.findItem(R.id.navigation_zaustavi).isVisible = false
-        bottomNavigation.menu.findItem(R.id.navigation_kvizovi).isVisible = true
-        bottomNavigation.menu.findItem(R.id.navigation_predmeti).isVisible = true
+        bottomNavigation.menu.findItem(R.id.predajKviz).isVisible = false
+        bottomNavigation.menu.findItem(R.id.zaustaviKviz).isVisible = false
+        bottomNavigation.menu.findItem(R.id.kvizovi).isVisible = true
+        bottomNavigation.menu.findItem(R.id.predmeti).isVisible = true
     }
-
-//    fun showPorukaFragment(poruka: String) {
-//        porukaFragment.setPorukaFragmentText(poruka)
-//        supportFragmentManager.beginTransaction().hide(trenutniMainFragment).show(porukaFragment).commit()
-//        trenutniMainFragment = porukaFragment
-//        kvizoviFragment.osvjeziKvizove()
-//    }
-//
-//    fun showPokusajFragment(fragment: PokusajFragment) {
-//        pokusajFragment = fragment
-//        supportFragmentManager.beginTransaction().apply{
-//            add(R.id.container,pokusajFragment,"pokusaj")
-//            hide(trenutniMainFragment).show(pokusajFragment)
-//        }.commit()
-//        trenutniMainFragment = pokusajFragment
-//    }
 }

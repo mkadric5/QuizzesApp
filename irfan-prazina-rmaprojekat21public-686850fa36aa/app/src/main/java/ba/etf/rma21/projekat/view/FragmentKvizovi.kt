@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,7 @@ import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 
-class KvizoviFragment: Fragment() {
+class FragmentKvizovi: Fragment() {
     private lateinit var filterKvizova: Spinner
     private lateinit var listaKvizova: RecyclerView
     private lateinit var kvizAdapter: KvizAdapter
@@ -36,7 +37,7 @@ class KvizoviFragment: Fragment() {
         filterKvizova.adapter = filterKvizovaAdapter
 
         kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove()) {kviz ->
-                val pokusajFragment = PokusajFragment.newInstance(
+                val pokusajFragment = FragmentPokusaj.newInstance(
                         pitanjaKvizViewModel.dajPitanjaZaKviz(kviz))
                 openPokusajFragment(pokusajFragment, kviz.naziv)
             if (kviz.datumRada == null && kviz.osvojeniBodovi == null)
@@ -63,13 +64,13 @@ class KvizoviFragment: Fragment() {
     }
 
     private fun openPokusajFragment(fragment: Fragment, tag: String) {
-        val supportFragmentManager = (activity as MainActivity).supportFragmentManager
+        val supportFragmentManager = (activity as AppCompatActivity).supportFragmentManager
         val transaction = supportFragmentManager.beginTransaction()
 
-        val naStacku = supportFragmentManager.findFragmentByTag(tag)
+//        val naStacku = supportFragmentManager.findFragmentByTag(tag)
 //        if (naStacku == null){
             transaction.replace(R.id.container,fragment,tag)
-            transaction.addToBackStack(tag)
+//            transaction.addToBackStack(tag)
 //        }
 //        else transaction.replace(R.id.container,fragment,tag)
         transaction.commit()
@@ -77,7 +78,7 @@ class KvizoviFragment: Fragment() {
     }
 
     companion object {
-        fun newInstance(): KvizoviFragment = KvizoviFragment()
+        fun newInstance(): FragmentKvizovi = FragmentKvizovi()
     }
 
     private fun updateLista(filterNaziv: String) {

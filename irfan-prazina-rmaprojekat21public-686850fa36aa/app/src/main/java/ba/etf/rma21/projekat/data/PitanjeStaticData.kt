@@ -20,6 +20,16 @@ fun svaPitanja(): List<Pitanje> {
             listOf("0","6","4"),2),
 
             Pitanje("Pitanje 6","Najbolji predmeti je",
-            listOf("Razvoj Mobilnih aplikacija","Linearna algebra i geometrija","Operativni sistemi"),0)
+            listOf("Razvoj Mobilnih aplikacija","Linearna algebra i geometrija","Operativni sistemi"),0),
+
+            Pitanje("Pitanje 7","Izbaci uljeza",
+                    listOf("plava","zelena","crvena"),1),
+
+            Pitanje("Pitanje 8","Izbaci uljeza",
+                    listOf("plava","zelena","crvena"),1),
+
+            Pitanje("Pitanje 9","Izbaci uljeza",
+                    listOf("plava","zelena","crvena"),1)
+
     )
 }

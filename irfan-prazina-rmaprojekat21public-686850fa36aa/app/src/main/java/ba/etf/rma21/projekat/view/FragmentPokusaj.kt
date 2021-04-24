@@ -15,23 +15,23 @@ import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 import com.google.android.material.navigation.NavigationView
 
-class PokusajFragment(
+class FragmentPokusaj(
     private var pitanja: List<Pitanje>
 ): Fragment() {
     private lateinit var navigacijaPitanja: NavigationView
-    private var fragmentiPitanja = mutableListOf<PitanjeFragment>()
+    private var fragmentiPitanja = mutableListOf<FragmentPitanje>()
     private lateinit var trenutnoPitanjeFragment: Fragment
     private var pitanjaKvizViewModel = PitanjeKvizViewModel()
     private var kvizListViewModel = KvizListViewModel()
 
-    fun getFragmentiPitanja(): List<PitanjeFragment> {
+    fun getFragmentiPitanja(): List<FragmentPitanje> {
         return fragmentiPitanja
     }
 
     fun vratiNaProsloPitanje() {
         var i = dajIndexTrenutnogPitanja() - 1
         if (i == -1) i++
-        openPitanjeFragment(fragmentiPitanja[i])
+        openPitanjeFragment(fragmentiPitanja[i],"")
     }
 
     private fun dajIndexTrenutnogPitanja(): Int {
@@ -49,23 +49,25 @@ class PokusajFragment(
         if (dajKviz().datumRada == null && dajKviz().osvojeniBodovi == null)
         navigacijaPitanja.menu.getItem(pitanja.size).isVisible = false
 
-        pitanja.forEach {
-            fragmentiPitanja.add(PitanjeFragment.newInstance(it))
-        }
-        childFragmentManager.beginTransaction().apply {
-            fragmentiPitanja.forEach{
-                add(R.id.framePitanje,it).hide(it)
-            }
-        }.commit()
-        trenutnoPitanjeFragment = fragmentiPitanja[0]
-        childFragmentManager.beginTransaction().show(trenutnoPitanjeFragment).commit()
+
+//        pitanja.forEach {
+//            fragmentiPitanja.add(FragmentPitanje.newInstance(it))
+//        }
+//        childFragmentManager.beginTransaction().apply {
+//            fragmentiPitanja.forEach{
+//                add(R.id.framePitanje,it).hide(it)
+//            }
+//        }.commit()
+//        trenutnoPitanjeFragment = fragmentiPitanja[0]
+//        childFragmentManager.beginTransaction().show(trenutnoPitanjeFragment).commit()
 
 
         navigacijaPitanja.setNavigationItemSelectedListener {
             if (it != navigacijaPitanja.menu.getItem(pitanja.size)){
                 val indeks = Integer.parseInt(it.toString())
-                val pitanjeFragment = fragmentiPitanja[indeks-1]
-                openPitanjeFragment(pitanjeFragment)
+//                val pitanjeFragment = fragmentiPitanja[indeks-1]
+                val pitanjeFragment = FragmentPitanje.newInstance(pitanja[indeks-1])
+                openPitanjeFragment(pitanjeFragment,it.toString())
 //            setTextColorForMenuItem(it,true)
             }
             else {
@@ -85,12 +87,21 @@ class PokusajFragment(
         menuItem.title = spanString
     }
 
-     private fun openPitanjeFragment(pitanjeFragment: Fragment) {
+     private fun openPitanjeFragment(pitanjeFragment: Fragment, tag: String) {
         val transaction = childFragmentManager.beginTransaction()
-         transaction.hide(trenutnoPitanjeFragment)
-        transaction.show(pitanjeFragment)
-        transaction.commit()
-        trenutnoPitanjeFragment = pitanjeFragment
+//         transaction.hide(trenutnoPitanjeFragment)
+//        transaction.show(pitanjeFragment)
+//        transaction.commit()
+//        trenutnoPitanjeFragment = pitanjeFragment
+
+         val naStacku = childFragmentManager.findFragmentByTag(tag)
+         if (naStacku == null){
+             transaction.replace(R.id.framePitanje,pitanjeFragment,tag)
+             transaction.addToBackStack(tag)
+         }
+         else
+             transaction.replace(R.id.framePitanje,naStacku,tag)
+         transaction.commit()
 
 //        val postojeciNaStacku = childFragmentManager.findFragmentByTag(indeks)
 //        if (postojeciNaStacku != null){
@@ -105,19 +116,23 @@ class PokusajFragment(
     }
 
     fun openporukaFragment() {
-        val porukaFragment = PorukaFragment.newInstance(
+        val porukaFragment = FragmentPoruka.newInstance(
                 "Završili ste kviz ${dajNazivKviza()} sa tačnosti ${dajTacnost()}")
+        val tag = "zavrsen kviz"
 
         val transaction = childFragmentManager.beginTransaction()
-        val naStacku = childFragmentManager.findFragmentByTag("zavrsen kviz")
-        transaction.hide(trenutnoPitanjeFragment)
+        val naStacku = childFragmentManager.findFragmentByTag(tag)
+//        transaction.hide(trenutnoPitanjeFragment)
         if (naStacku == null){
-            transaction.add(R.id.framePitanje,porukaFragment,"zavrsen kviz")
-            trenutnoPitanjeFragment = porukaFragment
+            transaction.replace(R.id.framePitanje,porukaFragment,tag)
+            transaction.addToBackStack(tag)
+//            transaction.add(R.id.framePitanje,porukaFragment,"zavrsen kviz")
+//            trenutnoPitanjeFragment = porukaFragment
         }
         else{
-            transaction.show(naStacku)
-            trenutnoPitanjeFragment = naStacku
+            transaction.replace(R.id.framePitanje,naStacku,tag)
+//            transaction.show(naStacku)
+//            trenutnoPitanjeFragment = naStacku
         }
         transaction.commit()
         navigacijaPitanja.menu.getItem(pitanja.size).isVisible = true
@@ -148,6 +163,6 @@ class PokusajFragment(
     }
 
     companion object {
-        fun newInstance(pitanja: List<Pitanje>): PokusajFragment = PokusajFragment(pitanja)
+        fun newInstance(pitanja: List<Pitanje>): FragmentPokusaj = FragmentPokusaj(pitanja)
     }
 }
