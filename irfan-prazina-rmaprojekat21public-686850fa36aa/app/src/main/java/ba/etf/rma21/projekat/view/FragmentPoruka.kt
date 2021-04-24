@@ -13,7 +13,7 @@ class FragmentPoruka(private val poruka: String): Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.poruka_fragment, container, false)
+        var view = inflater.inflate(R.layout.fragment_poruka, container, false)
 
         textPoruka = view.findViewById(R.id.tvPoruka)
         textPoruka.text = poruka

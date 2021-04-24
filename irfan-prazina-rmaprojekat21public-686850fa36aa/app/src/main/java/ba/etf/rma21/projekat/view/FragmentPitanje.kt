@@ -18,14 +18,14 @@ class FragmentPitanje(
     private lateinit var listaOdgovoraAdapter: OdgovorAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.pitanje_fragment,container,false)
+        var view = inflater.inflate(R.layout.fragment_pitanje,container,false)
 
         tekstPitanja = view.findViewById(R.id.tekstPitanja)
         listaOdgovora = view.findViewById(R.id.odgovoriLista)
 
         tekstPitanja.text = pitanje.tekst
         listaOdgovoraAdapter = OdgovorAdapter(view.context,android.R.layout.simple_list_item_1,pitanje.opcije,pitanje,
-                false)
+                false, parentFragment!!,tag!!)
         listaOdgovora.adapter = listaOdgovoraAdapter
         return view
     }

@@ -3,8 +3,8 @@ package ba.etf.rma21.projekat.view
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -24,27 +24,31 @@ class FragmentPokusaj(
     private var pitanjaKvizViewModel = PitanjeKvizViewModel()
     private var kvizListViewModel = KvizListViewModel()
 
-    fun getFragmentiPitanja(): List<FragmentPitanje> {
-        return fragmentiPitanja
-    }
-
     fun vratiNaProsloPitanje() {
         var i = dajIndexTrenutnogPitanja() - 1
         if (i == -1) i++
-        openPitanjeFragment(fragmentiPitanja[i],"")
+        val pitanjeFragment = FragmentPitanje.newInstance(pitanja[i])
+        val tag = (i+1).toString()
+        openPitanjeFragment(pitanjeFragment,tag)
     }
 
     private fun dajIndexTrenutnogPitanja(): Int {
-        return fragmentiPitanja.indexOf(trenutnoPitanjeFragment)
+        val trenutni = childFragmentManager.fragments.last()
+        if (trenutni is FragmentPoruka)
+            return pitanja.size
+        return trenutni.tag!!.toInt() - 1
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.pokusaj_fragment,container,false)
+        val view = inflater.inflate(R.layout.fragment_pokusaj,container,false)
 
         navigacijaPitanja = view.findViewById(R.id.navigacijaPitanja)
-        for (i in 1..pitanja.size)
-            navigacijaPitanja.menu.add("$i")
-        navigacijaPitanja.menu.add("Rezultat")
+        var i: Int = 0
+        while(i<pitanja.size) {
+            navigacijaPitanja.menu.add(R.id.grupaItem,i,i,"${i+1}")
+            i++
+        }
+        navigacijaPitanja.menu.add(R.id.grupaItem,i,i,"Rezultat")
 
         if (dajKviz().datumRada == null && dajKviz().osvojeniBodovi == null)
         navigacijaPitanja.menu.getItem(pitanja.size).isVisible = false
@@ -60,6 +64,14 @@ class FragmentPokusaj(
 //        }.commit()
 //        trenutnoPitanjeFragment = fragmentiPitanja[0]
 //        childFragmentManager.beginTransaction().show(trenutnoPitanjeFragment).commit()
+
+        val pocetniFragment = FragmentPitanje.newInstance(pitanja[0])
+        openPitanjeFragment(pocetniFragment,"1")
+
+        for (element in pitanja){
+            if (pitanjaOdgovorena()[pitanja.indexOf(element)])
+            setTextColorForMenuItem(pitanja.indexOf(element),pitanjaKvizViewModel.tacnoOdgovoreno(element))
+        }
 
 
         navigacijaPitanja.setNavigationItemSelectedListener {
@@ -78,13 +90,18 @@ class FragmentPokusaj(
         return view
     }
 
-    private fun setTextColorForMenuItem(menuItem: MenuItem, tacnoOdgovoreno: Boolean) {
-        var color = Color.parseColor("#3DDC84")
+     fun setTextColorForMenuItem(itemIndex: Int, tacnoOdgovoreno: Boolean) {
+         val menuItem = navigacijaPitanja.menu.getItem(itemIndex)
+         var color = Color.parseColor("#3DDC84")
         if (!tacnoOdgovoreno)
             color = Color.parseColor("#DB4F3D")
         val spanString = SpannableString(menuItem.title.toString())
-        spanString.setSpan(color, 0, spanString.length, 0)
+        spanString.setSpan(ForegroundColorSpan(color), 0, spanString.length, 0)
         menuItem.title = spanString
+    }
+
+    fun getNavigacijaPitanja(): NavigationView {
+        return navigacijaPitanja
     }
 
      private fun openPitanjeFragment(pitanjeFragment: Fragment, tag: String) {
@@ -118,7 +135,7 @@ class FragmentPokusaj(
     fun openporukaFragment() {
         val porukaFragment = FragmentPoruka.newInstance(
                 "Završili ste kviz ${dajNazivKviza()} sa tačnosti ${dajTacnost()}")
-        val tag = "zavrsen kviz"
+        val tag = "rezultat"
 
         val transaction = childFragmentManager.beginTransaction()
         val naStacku = childFragmentManager.findFragmentByTag(tag)
@@ -126,7 +143,7 @@ class FragmentPokusaj(
         if (naStacku == null){
             transaction.replace(R.id.framePitanje,porukaFragment,tag)
             transaction.addToBackStack(tag)
-//            transaction.add(R.id.framePitanje,porukaFragment,"zavrsen kviz")
+//            transaction.add(R.id.framePitanje,porukaFragment,"rezultat")
 //            trenutnoPitanjeFragment = porukaFragment
         }
         else{
@@ -151,15 +168,19 @@ class FragmentPokusaj(
     }
 
     private fun dajBrojTacnih(): Int {
-        var brojTacnih = 0
-        fragmentiPitanja.forEach {pF ->
-            if (pF.odgovoreno() && pF.tacnoOdgovoreno()) brojTacnih++
-        }
-        return brojTacnih
+        return pitanja.map{
+            p -> pitanjaKvizViewModel.tacnoOdgovoreno(p)
+        }.count { o -> o }
     }
 
     fun dajBodove(): Float {
         return dajBrojTacnih().toFloat()
+    }
+
+    fun pitanjaOdgovorena(): List<Boolean> {
+        return pitanja.map {
+            p -> pitanjaKvizViewModel.odgovoreno(p)
+        }
     }
 
     companion object {

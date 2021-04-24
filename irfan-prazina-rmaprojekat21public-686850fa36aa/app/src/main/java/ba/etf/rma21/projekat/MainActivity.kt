@@ -97,9 +97,7 @@ class MainActivity : AppCompatActivity() {
         if (trenutni is FragmentKvizovi)
             finish()
         else if (trenutni is FragmentPokusaj &&
-                trenutni.getFragmentiPitanja().any {
-                    it.odgovoreno()
-                } && trenutni.childFragmentManager.findFragmentByTag("zavrsen kviz") == null) {
+                trenutni.pitanjaOdgovorena().contains(true)) {
                     trenutni.vratiNaProsloPitanje()
             }
         else

@@ -1,5 +1,6 @@
 package ba.etf.rma21.projekat.data.repositories
 
+import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.data.models.PitanjeKviz
 import ba.etf.rma21.projekat.data.svaPitanja
@@ -31,9 +32,16 @@ class PitanjeKvizRepository {
             return svaPitanja.find {pK -> pK.naziv == pitanje.naziv}!!
         }
 
-        fun postaviOdgovor(pitanje: Pitanje, odg: Int) {
+        fun postaviOdgovor(pitanje: Pitanje, odg: Int? = null) {
             val pitanjeK = svaPitanja.find { pK -> pK.naziv == pitanje.naziv }!!
             pitanjeK.odgovor = odg
         }
+
+        fun oznaciNeodgovorena(kviz: Kviz) {
+            svaPitanja.filter { pK -> pK.kviz == kviz.naziv }.forEach {
+                if (it.odgovor == null)
+                    it.odgovor = -1
+                }
+            }
+        }
     }
-}

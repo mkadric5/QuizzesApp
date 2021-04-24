@@ -12,22 +12,16 @@ fun upisaniKvizovi(): List<Kviz> {
     c.set(2025,3,10)
     val datumKraja = c.time
 
-    c.set(2021,3,3)
-    val datumRada = c.time
-
     c.set(2021,1,3)
-    val datumPocetka3 = c.time
+    val datumPocetka2 = c.time
 
-    c.set(2021,1,6)
-    val datumKraja3 = c.time
+    c.set(2027,1,6)
+    val datumKraja2 = c.time
 
 return listOf(
-        //aktivan i uradjeni kviz - plava
-//        Kviz("IM2 kviz 1","IM2",datumPocetka,
-//                datumKraja,datumRada,5, "IM2 grupa 1",5F),
-//        //neuradjen kviz koji je prosao - crvena
-//        Kviz("IM2 kviz 2","IM2",datumPocetka3,
-//                datumKraja3,null,5, "IM2 grupa 1",null),
+        //neuradjen kviz koji je aktivan - zelena
+        Kviz("IM2 kviz 1","IM2",datumPocetka2,
+                datumKraja2,null,5, "IM2 grupa 1",null),
         //neuradjen kviz koji je aktivan - zelena
         Kviz("RPR kviz 1", "RPR", datumPocetka,
         datumKraja, null, 5,"RPR grupa 1",null)

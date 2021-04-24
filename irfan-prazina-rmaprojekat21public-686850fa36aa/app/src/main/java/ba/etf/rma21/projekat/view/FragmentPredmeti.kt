@@ -30,7 +30,7 @@ class FragmentPredmeti: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.predmeti_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_predmeti, container, false)
 
         odabirGodina = view.findViewById(R.id.odabirGodina)
         odabirPredmet = view.findViewById(R.id.odabirPredmet)

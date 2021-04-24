@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
+import com.google.android.material.navigation.NavigationView
 
 class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val elements: List<String>,
-private val pitanje: Pitanje,private var needToBeDisabled: Boolean):
+private val pitanje: Pitanje, private var needToBeDisabled: Boolean,private var pokusajFragment: Fragment,
+private var tag: String):
         ArrayAdapter<String>(context, layoutResource, elements) {
     private val pitanjaKvizViewModel = PitanjeKvizViewModel()
     private val kvizListViewModel = KvizListViewModel()
@@ -29,12 +32,13 @@ private val pitanje: Pitanje,private var needToBeDisabled: Boolean):
             needToBeDisabled = true
         }
 
-        if (pitanjeKviz.odgovor != null) {
+        if (pitanjeKviz.odgovor != null && pitanjeKviz.odgovor != -1) {
             if (tekstOdgovor.text == elements[pitanjeKviz.odgovor!!]) {
                 if (tekstOdgovor.text != pitanje.opcije[pitanje.tacan])
                     tekstOdgovor.setBackgroundColor(Color.parseColor("#DB4F3D"))
-                needToBeDisabled = true
+//                needToBeDisabled = true
             }
+
             if (tekstOdgovor.text == elements[pitanje.tacan])
                 tekstOdgovor.setBackgroundColor(Color.parseColor("#3DDC84"))
             needToBeDisabled = true
@@ -42,8 +46,14 @@ private val pitanje: Pitanje,private var needToBeDisabled: Boolean):
 
         view.setOnClickListener {
             if (!needToBeDisabled) {
-                if (tekstOdgovor.text != pitanje.opcije[pitanje.tacan])
+                if (tekstOdgovor.text != pitanje.opcije[pitanje.tacan]){
                     tekstOdgovor.setBackgroundColor(Color.parseColor("#DB4F3D"))
+                    (pokusajFragment as FragmentPokusaj).setTextColorForMenuItem(
+                            tag.toInt()-1,false)
+                    } else {
+                    (pokusajFragment as FragmentPokusaj).setTextColorForMenuItem(
+                            tag.toInt()-1,true)
+                }
                 parent.getChildAt(pitanje.tacan).setBackgroundColor(Color.parseColor("#3DDC84"))
                 pitanjaKvizViewModel.postaviOdgovor(pitanje,parent.indexOfChild(it))
                 needToBeDisabled = true

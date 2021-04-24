@@ -1,9 +1,8 @@
 package ba.etf.rma21.projekat.viewmodel
 
 import ba.etf.rma21.projekat.data.models.Kviz
-import ba.etf.rma21.projekat.data.repositories.GrupaRepository
 import ba.etf.rma21.projekat.data.repositories.KvizRepository
-import ba.etf.rma21.projekat.data.repositories.PredmetRepository
+import ba.etf.rma21.projekat.data.repositories.PitanjeKvizRepository
 
 class KvizListViewModel {
 
@@ -33,6 +32,7 @@ class KvizListViewModel {
     }
 
     fun oznaciKvizKaoUradjen(kviz: Kviz, bodovi: Float) {
+        PitanjeKvizRepository.oznaciNeodgovorena(kviz)
         KvizRepository.oznaciKaoUradjen(kviz,bodovi)
     }
 
