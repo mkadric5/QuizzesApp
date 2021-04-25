@@ -11,9 +11,8 @@ import ba.etf.rma21.projekat.R
 class FragmentPoruka(private val poruka: String): Fragment() {
     private lateinit var textPoruka: TextView
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_poruka, container, false)
+        val view = inflater.inflate(R.layout.fragment_poruka, container, false)
 
         textPoruka = view.findViewById(R.id.tvPoruka)
         textPoruka.text = poruka

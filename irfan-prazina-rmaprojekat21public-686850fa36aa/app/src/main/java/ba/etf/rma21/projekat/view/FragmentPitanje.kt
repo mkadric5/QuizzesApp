@@ -18,7 +18,7 @@ class FragmentPitanje(
     private lateinit var listaOdgovoraAdapter: OdgovorAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_pitanje,container,false)
+        val view = inflater.inflate(R.layout.fragment_pitanje,container,false)
 
         tekstPitanja = view.findViewById(R.id.tekstPitanja)
         listaOdgovora = view.findViewById(R.id.odgovoriLista)
@@ -29,19 +29,6 @@ class FragmentPitanje(
         listaOdgovora.adapter = listaOdgovoraAdapter
         return view
     }
-
-    fun tacnoOdgovoreno(): Boolean {
-        return listaOdgovoraAdapter.tacnoOdgovoreno()
-    }
-
-    fun odgovoreno(): Boolean {
-        return listaOdgovoraAdapter.odgovoreno()
-    }
-
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putBoolean("odgovoreno",listaOdgovoraAdapter.getNeedToBeDisabled())
-//    }
 
     companion object {
         fun newInstance(pitanje: Pitanje): FragmentPitanje = FragmentPitanje(pitanje)

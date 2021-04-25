@@ -15,6 +15,7 @@ import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
+import java.util.*
 
 class FragmentKvizovi: Fragment() {
     private lateinit var filterKvizova: Spinner
@@ -36,12 +37,15 @@ class FragmentKvizovi: Fragment() {
         filterKvizovaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filterKvizova.adapter = filterKvizovaAdapter
 
-        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove()) {kviz ->
+        kvizAdapter = KvizAdapter(kvizListViewModel.dajMojeKvizove()) { kviz->
                 val pokusajFragment = FragmentPokusaj.newInstance(
                         pitanjaKvizViewModel.dajPitanjaZaKviz(kviz))
                 openPokusajFragment(pokusajFragment, kviz.naziv)
-            if (kviz.datumRada == null && kviz.osvojeniBodovi == null)
-                (activity as MainActivity).showPokusajItems()
+            if (kviz.datumRada == null && kviz.osvojeniBodovi == null){
+                if (kviz.datumKraj < Calendar.getInstance().time)
+                    (activity as MainActivity).hidePokusajItems()
+                else (activity as MainActivity).showPokusajItems()
+            }
             else (activity as MainActivity).hidePokusajItems()
         }
         listaKvizova.layoutManager = GridLayoutManager(context!!,2)
@@ -66,15 +70,8 @@ class FragmentKvizovi: Fragment() {
     private fun openPokusajFragment(fragment: Fragment, tag: String) {
         val supportFragmentManager = (activity as AppCompatActivity).supportFragmentManager
         val transaction = supportFragmentManager.beginTransaction()
-
-//        val naStacku = supportFragmentManager.findFragmentByTag(tag)
-//        if (naStacku == null){
             transaction.replace(R.id.container,fragment,tag)
-//            transaction.addToBackStack(tag)
-//        }
-//        else transaction.replace(R.id.container,fragment,tag)
         transaction.commit()
-//        (activity as MainActivity).showPokusajFragment(fragment as PokusajFragment)
     }
 
     companion object {

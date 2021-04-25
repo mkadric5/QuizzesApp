@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
-import com.google.android.material.navigation.NavigationView
 
 class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val elements: List<String>,
 private val pitanje: Pitanje, private var needToBeDisabled: Boolean,private var pokusajFragment: Fragment,
@@ -48,10 +47,10 @@ private var tag: String):
             if (!needToBeDisabled) {
                 if (tekstOdgovor.text != pitanje.opcije[pitanje.tacan]){
                     tekstOdgovor.setBackgroundColor(Color.parseColor("#DB4F3D"))
-                    (pokusajFragment as FragmentPokusaj).setTextColorForMenuItem(
+                    (pokusajFragment as FragmentPokusaj).postaviBojuZaNavigacijaPitanje(
                             tag.toInt()-1,false)
                     } else {
-                    (pokusajFragment as FragmentPokusaj).setTextColorForMenuItem(
+                    (pokusajFragment as FragmentPokusaj).postaviBojuZaNavigacijaPitanje(
                             tag.toInt()-1,true)
                 }
                 parent.getChildAt(pitanje.tacan).setBackgroundColor(Color.parseColor("#3DDC84"))
@@ -61,15 +60,5 @@ private var tag: String):
         }
 
         return view
-    }
-
-    fun odgovoreno(): Boolean {
-        val pitanjeKviz = pitanjaKvizViewModel.dajPitanjeKvizZaPitanje(pitanje)
-        return pitanjeKviz.odgovor != null
-    }
-
-    fun tacnoOdgovoreno(): Boolean {
-        val pitanjeKviz = pitanjaKvizViewModel.dajPitanjeKvizZaPitanje(pitanje)
-        return pitanjeKviz.odgovor == pitanje.tacan
     }
         }

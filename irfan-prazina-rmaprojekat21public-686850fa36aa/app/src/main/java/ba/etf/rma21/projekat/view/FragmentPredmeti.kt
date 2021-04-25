@@ -44,9 +44,6 @@ class FragmentPredmeti: Fragment() {
 
         odabirGodina.setSelection(lastGodina)
 
-
-//        odabirGodina.setSelection(odabirGodinaAdapter.getPosition(intent.getStringExtra("default_godina")))
-
         odabirGodina.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }

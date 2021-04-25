@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 //        } else finish()
         val trenutni = supportFragmentManager.fragments.last()
         if (trenutni is FragmentKvizovi)
-            finish()
+            return
         else if (trenutni is FragmentPokusaj &&
                 trenutni.pitanjaOdgovorena().contains(true)) {
                     trenutni.vratiNaProsloPitanje()
