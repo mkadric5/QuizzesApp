@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.R
+import ba.etf.rma21.projekat.data.models.Grupa
+import ba.etf.rma21.projekat.data.models.Predmet
 import ba.etf.rma21.projekat.viewmodel.UpisPredmetViewModel
 
 class FragmentPredmeti: Fragment() {
@@ -15,8 +17,8 @@ class FragmentPredmeti: Fragment() {
     private lateinit var odabirGrupa: Spinner
     private lateinit var dodajPredmetButton: Button
     private lateinit var odabirGodinaAdapter: ArrayAdapter<String>
-    private lateinit var odabirPredmetAdapter: ArrayAdapter<String>
-    private lateinit var odabirGrupaAdapter: ArrayAdapter<String>
+    private lateinit var odabirPredmetAdapter: ArrayAdapter<Predmet>
+    private lateinit var odabirGrupaAdapter: ArrayAdapter<Grupa>
     private var upisPredmetViewModel = UpisPredmetViewModel()
     private var lastGodina: Int = 0
     private var lastPredmet: Int = 0
@@ -49,13 +51,13 @@ class FragmentPredmeti: Fragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                popuniPredmeteZaGodinu(odabirGodina.selectedItem.toString())
+                upisPredmetViewModel.popuniPredmeteZaGodinu(::updatePredmets,odabirGodina.selectedItem.toString().toInt())
                 odabirPredmet.setSelection(lastPredmet)
                 // ako nema predmeta za datu godinu, onda nema
                 // ni grupa
                 if (odabirPredmet.count == 0){
                     dodajPredmetButton.isEnabled = false
-                    popuniGrupeZaPredmet("")
+                    upisPredmetViewModel.popuniGrupeZaPredmet(::updateGroups, -1)
                     odabirGrupa.setSelection(lastGrupa)
                 } else dodajPredmetButton.isEnabled = true
             }
@@ -66,7 +68,7 @@ class FragmentPredmeti: Fragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                popuniGrupeZaPredmet(odabirPredmet.selectedItem.toString())
+                upisPredmetViewModel.popuniGrupeZaPredmet(::updateGroups, (odabirPredmet.selectedItem as Predmet).id)
                 odabirGrupa.setSelection(lastGrupa)
                 dodajPredmetButton.isEnabled = odabirGrupa.count != 0
             }
@@ -77,12 +79,12 @@ class FragmentPredmeti: Fragment() {
             val predmetItem = odabirPredmet.selectedItem
             val grupaItem = odabirGrupa.selectedItem
             if (godinaItem != null && predmetItem != null && grupaItem != null) {
-                upisPredmetViewModel.upisiKorisnika(grupaItem.toString(),predmetItem.toString())
+//                upisPredmetViewModel.upisiKorisnika(grupaItem.toString(),predmetItem.toString())
 //                (activity as MainActivity).showPorukaFragment(
 //                        "Uspješno ste upisani u grupu ${grupaItem} predmeta ${predmetItem}!")
-                val porukaFragment = FragmentPoruka.newInstance(
-                        "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
-                openPorukaFragment(porukaFragment)
+//                val porukaFragment = FragmentPoruka.newInstance(
+//                        "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
+//                openPorukaFragment(porukaFragment)
             }
         }
         return view
@@ -92,6 +94,20 @@ class FragmentPredmeti: Fragment() {
         fun newInstance(): FragmentPredmeti = FragmentPredmeti()
     }
 
+    private fun updatePredmets(predmeti: List<Predmet>) {
+        odabirPredmetAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
+            predmeti)
+        odabirPredmetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        odabirPredmet.adapter = odabirPredmetAdapter
+    }
+
+    private fun updateGroups(grupe: List<Grupa>) {
+        odabirGrupaAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
+            grupe)
+        odabirGrupaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        odabirGrupa.adapter = odabirGrupaAdapter
+    }
+
     private fun openPorukaFragment(porukaFragment: Fragment) {
         val transaction = activity!!.supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container,porukaFragment,"poruka")
@@ -99,18 +115,18 @@ class FragmentPredmeti: Fragment() {
         transaction.commit()
     }
 
-    private fun popuniGrupeZaPredmet(predmet: String) {
-        odabirGrupaAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
-            upisPredmetViewModel.dajGrupeZaPredmet(predmet))
-        odabirGrupaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        odabirGrupa.adapter = odabirGrupaAdapter
-    }
+//    private fun popuniGrupeZaPredmet(predmet: String) {
+//        odabirGrupaAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
+//            upisPredmetViewModel.dajGrupeZaPredmet(predmet))
+//        odabirGrupaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        odabirGrupa.adapter = odabirGrupaAdapter
+//    }
 
-    private fun popuniPredmeteZaGodinu(godina: String) {
-        val brGodine = Integer.parseInt(godina)
-        odabirPredmetAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
-            upisPredmetViewModel.dajOPredmeteZaGodinu(brGodine))
-        odabirPredmetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        odabirPredmet.adapter = odabirPredmetAdapter
-    }
+//    private fun popuniPredmeteZaGodinu(godina: String) {
+//        val brGodine = Integer.parseInt(godina)
+//        odabirPredmetAdapter = ArrayAdapter(odabirGodina.context, android.R.layout.simple_spinner_item,
+//            upisPredmetViewModel.dajOPredmeteZaGodinu(brGodine))
+//        odabirPredmetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        odabirPredmet.adapter = odabirPredmetAdapter
+//    }
 }

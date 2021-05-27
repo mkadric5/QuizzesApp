@@ -1,15 +1,18 @@
 package ba.etf.rma21.projekat.data.models
 
+import com.google.gson.annotations.SerializedName
 import java.lang.IllegalArgumentException
 import java.util.*
 
 data class Kviz(
-    val naziv: String, val nazivPredmeta: String, val datumPocetka: Date, val datumKraj: Date,
-    var datumRada: Date?, val trajanje: Int, val nazivGrupe: String, var osvojeniBodovi: Float?
+    @SerializedName("id") val id: Int,
+    @SerializedName("naziv") val naziv: String,
+    var predmeti: MutableList<Predmet>? = mutableListOf(),
+    @SerializedName("datumPocetak") val datumPocetak: Date,
+    @SerializedName("datumKraj") val datumKraj: Date?,
+//    val datumRada: Date?,
+    @SerializedName("trajanje") val trajanje: Int
+//    val grupa: Grupa,
+//    val osvojeniBodovi: Double?
 ) {
-    init {
-        if (datumPocetka > datumKraj) throw IllegalArgumentException("Neispravni parametri")
-        if (datumRada != null && osvojeniBodovi == null || datumRada == null && osvojeniBodovi != null)
-            throw IllegalArgumentException("Neispravni parametri")
-    }
 }

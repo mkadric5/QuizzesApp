@@ -4,8 +4,7 @@ import ba.etf.rma21.projekat.data.models.Predmet
 import ba.etf.rma21.projekat.data.neupisaniPredmeti
 import ba.etf.rma21.projekat.data.upisaniPredmeti
 
-class PredmetRepository {
-    companion object {
+object PredmetRepository {
         private var mojiPredmeti: MutableList<Predmet> = upisaniPredmeti().toMutableList()
         private var ostaliPredmeti: MutableList<Predmet> = neupisaniPredmeti().toMutableList()
 
@@ -36,6 +35,4 @@ class PredmetRepository {
             }
             ostaliPredmeti.remove(p)
         }
-    }
-
 }
