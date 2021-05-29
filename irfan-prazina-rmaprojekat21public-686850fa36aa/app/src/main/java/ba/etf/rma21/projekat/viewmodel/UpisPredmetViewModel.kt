@@ -1,12 +1,9 @@
 package ba.etf.rma21.projekat.viewmodel
 
+import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.data.models.Grupa
-import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.data.models.Predmet
-import ba.etf.rma21.projekat.data.repositories.GrupaRepository
-import ba.etf.rma21.projekat.data.repositories.KvizRepository
 import ba.etf.rma21.projekat.data.repositories.PredmetIGrupaRepository
-import ba.etf.rma21.projekat.data.repositories.PredmetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,17 +31,26 @@ class UpisPredmetViewModel {
     }
 
     private suspend fun dajPredmeteZaGodinu(godina: Int): List<Predmet> {
-        return PredmetIGrupaRepository.dajPredmeteZaGodinu(godina)
+        return PredmetIGrupaRepository.dajNeupisanePredmeteZaGodinu(godina)
     }
 
     fun popuniGrupeZaPredmet(actionGrupe: ((grupe: List<Grupa>) -> Unit), predmetId: Int) {
         scope.launch {
+            if (predmetId > 0)
             actionGrupe.invoke(dajGrupeZaPredmet(predmetId))
+            else actionGrupe.invoke(listOf())
         }
     }
 
     private suspend fun dajGrupeZaPredmet(predmetId: Int): List<Grupa> {
         return PredmetIGrupaRepository.getGrupeZaPredmet(predmetId)
+    }
+
+    fun upisiKorisnika(actionUpis: (fragmentPoruka: Fragment) -> Unit, fragmentPoruka: Fragment, grupaId: Int) {
+        scope.launch {
+            if (PredmetIGrupaRepository.upisiUGrupu(grupaId))
+                actionUpis.invoke(fragmentPoruka)
+        }
     }
 
 //    fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {

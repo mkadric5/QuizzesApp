@@ -12,8 +12,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class KvizAdapter(
-        private var dataSet: List<Kviz>
-//        private val listener: (Kviz) -> Unit
+        private var dataSet: List<Kviz>,
+        private val listener: (Kviz) -> Unit
 ) : RecyclerView.Adapter<KvizAdapter.ViewHolder>() {
     /**
      *Klasa za pružanje referenci na sve elemente view-a
@@ -70,7 +70,7 @@ class KvizAdapter(
         viewHolder.bodoviNaKvizu.text = "5"
 
         //bind slike kolora sa view- om i bind datuma sa textview-om
-        val datumPocetka = dataSet[position].datumPocetak
+        val datumPocetka = dataSet[position].datumPocetka
         val datumKraja = dataSet[position].datumKraj
 //        val datumRada = dataSet[position].datumRada
 //        val osvojeniBodovi = dataSet[position].osvojeniBodovi
@@ -105,10 +105,10 @@ class KvizAdapter(
         val id: Int = context.resources.getIdentifier(bojaKviza,"drawable", context.packageName)
         viewHolder.slikaKviza.setImageResource(id)
 
-//        viewHolder.itemView.setOnClickListener{
-//            if (bojaKviza == "zelena" || bojaKviza == "plava" || bojaKviza == "crvena")
-//            listener(dataSet[position])
-//        }
+        viewHolder.itemView.setOnClickListener{
+            if (bojaKviza == "zelena" || bojaKviza == "plava" || bojaKviza == "crvena")
+            listener(dataSet[position])
+        }
     }
     // Vrati veličinu skupa
     override fun getItemCount() = dataSet.size

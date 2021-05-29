@@ -73,7 +73,7 @@ object KvizRepository {
         }
     }
 
-    suspend fun popuniPredmeteZaKviz(kviz: Kviz) {
+    private suspend fun popuniPredmeteZaKviz(kviz: Kviz) {
         val grupeZaKviz = ApiAdapter.retrofit.dajGrupeZaKviz(kviz.id).body()
         kviz.predmeti = mutableListOf()
         grupeZaKviz!!.forEach { grupa ->

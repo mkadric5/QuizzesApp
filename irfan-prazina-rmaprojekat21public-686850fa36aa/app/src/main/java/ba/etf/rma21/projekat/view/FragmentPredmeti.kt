@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Predmet
@@ -55,11 +56,11 @@ class FragmentPredmeti: Fragment() {
                 odabirPredmet.setSelection(lastPredmet)
                 // ako nema predmeta za datu godinu, onda nema
                 // ni grupa
-                if (odabirPredmet.count == 0){
-                    dodajPredmetButton.isEnabled = false
-                    upisPredmetViewModel.popuniGrupeZaPredmet(::updateGroups, -1)
-                    odabirGrupa.setSelection(lastGrupa)
-                } else dodajPredmetButton.isEnabled = true
+//                if (odabirPredmet.count == 0){
+//                    dodajPredmetButton.isEnabled = false
+//                    upisPredmetViewModel.popuniGrupeZaPredmet(::updateGroups, -1)
+//                    odabirGrupa.setSelection(lastGrupa)
+//                } else dodajPredmetButton.isEnabled = true
             }
         }
 
@@ -70,7 +71,7 @@ class FragmentPredmeti: Fragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 upisPredmetViewModel.popuniGrupeZaPredmet(::updateGroups, (odabirPredmet.selectedItem as Predmet).id)
                 odabirGrupa.setSelection(lastGrupa)
-                dodajPredmetButton.isEnabled = odabirGrupa.count != 0
+//                dodajPredmetButton.isEnabled = odabirGrupa.count != 0
             }
         }
 
@@ -79,12 +80,11 @@ class FragmentPredmeti: Fragment() {
             val predmetItem = odabirPredmet.selectedItem
             val grupaItem = odabirGrupa.selectedItem
             if (godinaItem != null && predmetItem != null && grupaItem != null) {
-//                upisPredmetViewModel.upisiKorisnika(grupaItem.toString(),predmetItem.toString())
 //                (activity as MainActivity).showPorukaFragment(
 //                        "Uspješno ste upisani u grupu ${grupaItem} predmeta ${predmetItem}!")
-//                val porukaFragment = FragmentPoruka.newInstance(
-//                        "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
-//                openPorukaFragment(porukaFragment)
+                val porukaFragment = FragmentPoruka.newInstance(
+                        "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
+                upisPredmetViewModel.upisiKorisnika(::openPorukaFragment,porukaFragment,(grupaItem as Grupa).id)
             }
         }
         return view

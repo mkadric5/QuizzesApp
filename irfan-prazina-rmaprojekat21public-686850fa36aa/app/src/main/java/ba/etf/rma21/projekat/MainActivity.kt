@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.view.FragmentKvizovi
+import ba.etf.rma21.projekat.view.FragmentPokusaj
 import ba.etf.rma21.projekat.view.FragmentPredmeti
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,14 +34,11 @@ class MainActivity : AppCompatActivity() {
                 openFragment(kvizoviFragment,"kvizovi")
                 hidePokusajItems()
             }
-//            R.id.predajKviz -> {
-//                val pokusajFragment = supportFragmentManager.fragments.last() as FragmentPokusaj
-//                val kviz = pokusajFragment.dajKviz()
-//                val bodovi = pokusajFragment.dajBodove()
-//                kvizListViewModel.oznaciKvizKaoUradjen(kviz,bodovi)
-//                pokusajFragment.openporukaFragment()
-//                hidePokusajItems()
-//            }
+            R.id.predajKviz -> {
+                val pokusajFragment = supportFragmentManager.fragments.last() as FragmentPokusaj
+                pokusajFragment.openPorukaZavrsenKviz()
+                hidePokusajItems()
+            }
         }
         false
     }

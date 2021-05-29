@@ -7,6 +7,7 @@ data class KvizTaken(
     @SerializedName("id") val id: Int,
     @SerializedName("student") val emailStudenta: String,
     @SerializedName("osvojeniBodovi") val osvojeniBodovi: Double,
-    @SerializedName("datumRada") val datumRada: Date
+    @SerializedName("datumRada") val datumRada: Date,
+    @SerializedName("KvizId") var KvizId: Int
 ){
 }

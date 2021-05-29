@@ -14,7 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.Kviz
+import ba.etf.rma21.projekat.data.models.KvizTaken
+import ba.etf.rma21.projekat.data.models.Odgovor
+import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
+import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 import java.util.*
 
 class FragmentKvizovi: Fragment() {
@@ -23,7 +27,7 @@ class FragmentKvizovi: Fragment() {
     private lateinit var kvizAdapter: KvizAdapter
     private lateinit var filterKvizovaAdapter: ArrayAdapter<String>
     private var kvizListViewModel = KvizListViewModel()
-//    private var pitanjaKvizViewModel = PitanjeKvizViewModel()
+    private var pitanjaKvizViewModel = PitanjeKvizViewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_kvizovi, container, false)
@@ -48,10 +52,22 @@ class FragmentKvizovi: Fragment() {
 //            }
 //            else (activity as MainActivity).hidePokusajItems()
 //        }
-        kvizAdapter = KvizAdapter(listOf())
+        kvizAdapter = KvizAdapter(listOf()){ kviz->
+            pitanjaKvizViewModel.otvoriPokusaj(::openPokusajFragment,kviz)
+//                val pokusajFragment = FragmentPokusaj.newInstance(
+//                        pitanjaKvizViewModel.dajPitanjaZaKviz(kviz))
+//                openPokusajFragment(pokusajFragment, kviz.naziv)
+//            if (kviz.datumRada == null && kviz.osvojeniBodovi == null){
+//                if (kviz.datumKraj < Calendar.getInstance().time)
+//                    (activity as MainActivity).hidePokusajItems()
+//                else (activity as MainActivity).showPokusajItems()
+//            }
+//            else (activity as MainActivity).hidePokusajItems()
+        }
         listaKvizova.layoutManager = GridLayoutManager(context!!,2)
         listaKvizova.addItemDecoration(SpaceItemDecoration(5))
         listaKvizova.adapter = kvizAdapter
+        kvizListViewModel.showKvizes(::updateKvizove,"Svi moji kvizovi")
         //kvizAdapter.notifyDataSetChanged()
 
 
@@ -69,11 +85,19 @@ class FragmentKvizovi: Fragment() {
         return view
     }
 
-    private fun openPokusajFragment(fragment: Fragment, tag: String) {
+    private fun openPokusajFragmentInstance(fragment: Fragment, tag: String) {
         val supportFragmentManager = (activity as AppCompatActivity).supportFragmentManager
         val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.container,fragment,tag)
         transaction.commit()
+    }
+
+    private fun openPokusajFragment(kvizTaken: KvizTaken?, pitanja: List<Pitanje>,kviz: Kviz, predatKviz: Boolean) {
+        val pokusajFragment = FragmentPokusaj.newInstance(kvizTaken, pitanja,predatKviz)
+        openPokusajFragmentInstance(pokusajFragment, kviz.naziv)
+        if (predatKviz)
+            (activity as MainActivity).hidePokusajItems()
+        else (activity as MainActivity).showPokusajItems()
     }
 
     companion object {

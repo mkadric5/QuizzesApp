@@ -2,7 +2,11 @@ package ba.etf.rma21.projekat.viewmodel
 
 import android.util.Log
 import ba.etf.rma21.projekat.data.models.Kviz
+import ba.etf.rma21.projekat.data.models.KvizTaken
+import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.data.repositories.KvizRepository
+import ba.etf.rma21.projekat.data.repositories.PitanjeKvizRepository
+import ba.etf.rma21.projekat.data.repositories.TakeKvizRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

@@ -2,6 +2,7 @@ package ba.etf.rma21.projekat.data.repositories
 
 import ba.etf.rma21.projekat.data.models.ApiAdapter
 import ba.etf.rma21.projekat.data.models.Grupa
+import ba.etf.rma21.projekat.data.models.Poruka
 import ba.etf.rma21.projekat.data.models.Predmet
 import ba.etf.rma21.projekat.data.neupisaniPredmeti
 import ba.etf.rma21.projekat.data.upisaniPredmeti
@@ -38,8 +39,8 @@ object PredmetIGrupaRepository {
         }
     }
 
-    suspend fun dajPredmeteZaGodinu(godina: Int): List<Predmet> {
-        return getPredmeti().filter { p -> p.godina == godina }
+    suspend fun dajNeupisanePredmeteZaGodinu(godina: Int): List<Predmet> {
+        return getNeupisaniPredmeti().filter { p -> p.godina == godina }
     }
 
     suspend fun getNeupisaniPredmeti(): List<Predmet> {
@@ -60,8 +61,7 @@ object PredmetIGrupaRepository {
     suspend fun getGrupeZaPredmet(idPredmeta: Int): List<Grupa> {
         return withContext(Dispatchers.IO) {
             var response = ApiAdapter.retrofit.dajGrupeZaPredmet(idPredmeta)
-//            var responseBody: List<Grupa>? = response.body()
-            var responseBody: MutableList<Grupa>? =  null
+            var responseBody: List<Grupa>? = response.body()
             if (responseBody == null) {
                 responseBody = mutableListOf()
             }
@@ -73,7 +73,8 @@ object PredmetIGrupaRepository {
         return withContext(Dispatchers.IO) {
             val idStudenta = AccountRepository.getHash()
             val response = ApiAdapter.retrofit.upisiuGrupu(idGrupa,idStudenta)
-            var responseBody: String? = response.body()
+            var responseBodyObject: Poruka = response.body()!!
+            var responseBody = responseBodyObject.poruka
             if (responseBody == "Grupa not found" || responseBody == "Ne postoji account gdje je hash = $idStudenta")
                 return@withContext false
             return@withContext true
