@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.KvizTaken
@@ -17,7 +16,7 @@ import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 class FragmentPitanje(
         private val kvizTaken: KvizTaken?,
         private val pitanje: Pitanje,
-        private val predatKviz: Boolean
+        private val brojPitanja: Int
 ): Fragment() {
     private lateinit var tekstPitanja: TextView
     private lateinit var listaOdgovora: ListView
@@ -41,14 +40,14 @@ class FragmentPitanje(
 
     private fun popuniAdapter(dosadasnjiOdgovori: List<Odgovor>) {
         listaOdgovoraAdapter = OdgovorAdapter(view!!.context,android.R.layout.simple_list_item_1,pitanje.opcije,kvizTaken,
-            pitanje, dosadasnjiOdgovori,predatKviz,false,parentFragment!!,tag!!)
+            pitanje, dosadasnjiOdgovori,brojPitanja,false,parentFragment!!,tag!!)
         listaOdgovora.adapter = listaOdgovoraAdapter
     }
 
     companion object {
         fun newInstance(kvizTaken: KvizTaken?,
                         pitanje: Pitanje,
-                        predatKviz: Boolean): FragmentPitanje =
+                        predatKviz: Int): FragmentPitanje =
             FragmentPitanje(kvizTaken,pitanje,predatKviz)
     }
 }

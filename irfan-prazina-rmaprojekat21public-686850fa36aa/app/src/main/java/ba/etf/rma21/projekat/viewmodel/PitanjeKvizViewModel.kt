@@ -1,6 +1,6 @@
 package ba.etf.rma21.projekat.viewmodel
 
-import androidx.fragment.app.Fragment
+import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.data.models.*
 import ba.etf.rma21.projekat.data.repositories.KvizRepository
 import ba.etf.rma21.projekat.data.repositories.OdgovorRepository
@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction1
 
 class PitanjeKvizViewModel {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
@@ -53,9 +54,10 @@ class PitanjeKvizViewModel {
         }
     }
 
-    fun postaviOdgovor(idKvizTaken: Int,idPitanje: Int,odgovor: Int, bodoviPitanje: Int) {
+    fun postaviOdgovor(kvizTaken: KvizTaken,idPitanje: Int,odgovor: Int, bodoviPitanje: Int) {
         scope.launch {
-            OdgovorRepository.postaviOdgovorKviz(idKvizTaken,idPitanje,odgovor,bodoviPitanje)
+            kvizTaken.osvojeniBodovi = (kvizTaken.osvojeniBodovi.toInt() + bodoviPitanje).toDouble()
+            OdgovorRepository.postaviOdgovorKviz(kvizTaken.id,idPitanje,odgovor,bodoviPitanje)
         }
     }
 
@@ -72,6 +74,35 @@ class PitanjeKvizViewModel {
     fun otvoriPorukuZavrsenKviz(actionZavrsenKviz: (kviz: Kviz?) -> Unit,idKviza: Int) {
         scope.launch {
             actionZavrsenKviz.invoke(KvizRepository.getById(idKviza))
+        }
+    }
+
+    fun zavrsiKvizOtvoriPoruku(actionZavrsenKviz: (kviz: Kviz?) -> Unit,kvizTaken: KvizTaken, pitanja: List<Pitanje>) {
+        scope.launch {
+            pitanja.forEach { p ->
+                val odgovorZaPitanje = OdgovorRepository.dajOdgovoreZaPitanjeKviz(p.id,kvizTaken.KvizId)
+                //Da li je odgovoreno na pitanje
+                if (odgovorZaPitanje.isEmpty()) {
+                    postaviOdgovor(kvizTaken,p.id,p.opcije.size,0)
+                }
+            }
+            actionZavrsenKviz.invoke(KvizRepository.getById(kvizTaken.KvizId))
+        }
+    }
+
+    fun vratiPrethodniFragment(
+        actionFragPitanje: () -> Unit, actionFragKvizovi: () -> Unit,
+        pitanja: List<Pitanje>, kvizTaken: KvizTaken) {
+        scope.launch {
+            pitanja.forEach { p ->
+                val odgovorZaPitanje = OdgovorRepository.dajOdgovoreZaPitanjeKviz(p.id,kvizTaken.KvizId)
+                //Da li je odgovoreno na pitanje
+                if (odgovorZaPitanje.isNotEmpty()) {
+                    actionFragPitanje.invoke()
+                    return@launch
+                }
+            }
+            actionFragKvizovi.invoke()
         }
     }
 }

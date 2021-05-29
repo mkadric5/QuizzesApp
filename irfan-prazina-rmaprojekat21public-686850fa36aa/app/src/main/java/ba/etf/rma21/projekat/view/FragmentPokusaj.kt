@@ -8,10 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.data.models.KvizTaken
-import ba.etf.rma21.projekat.data.models.Odgovor
 import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
@@ -26,20 +26,18 @@ class FragmentPokusaj(
     private var pitanjaKvizViewModel = PitanjeKvizViewModel()
     private var kvizListViewModel = KvizListViewModel()
 
-//    fun vratiNaProsloPitanje() {
-//        var i = dajIndexTrenutnogPitanja() - 1
-//        if (i == -1) i++
-//        val pitanjeFragment = FragmentPitanje.newInstance(kvizTaken,pitanja[i])
-//        val tag = (i+1).toString()
-//        openPitanjeFragment(pitanjeFragment,tag)
-//    }
+    fun vratiNaProsloPitanje() {
+        var i = dajIndexTrenutnogPitanja() - 1
+        if (i == -1) i++
+        openPitanjeFragment(pitanja[i])
+    }
 
-//    private fun dajIndexTrenutnogPitanja(): Int {
-//        val trenutni = childFragmentManager.fragments.last()
-//        if (trenutni is FragmentPoruka)
-//            return pitanja.size
-//        return trenutni.tag!!.toInt() - 1
-//    }
+    private fun dajIndexTrenutnogPitanja(): Int {
+        val trenutni = childFragmentManager.fragments.last()
+        if (trenutni is FragmentPoruka)
+            return pitanja.size
+        return trenutni.tag!!.toInt() - 1
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_pokusaj,container,false)
@@ -105,12 +103,12 @@ class FragmentPokusaj(
     }
 
     private fun openPitanjeFragment(pitanje: Pitanje) {
-        val pitanjeFragment = FragmentPitanje.newInstance(kvizTaken,pitanje,predatKviz)
+        val pitanjeFragment = FragmentPitanje.newInstance(kvizTaken,pitanje,pitanja.size)
         openPitanjeFragmentInstance(pitanjeFragment,(pitanja.indexOf(pitanje)+1).toString())
     }
 
     private fun openPorukaFragment(kviz: Kviz?) {
-        val tacnost = kvizTaken!!.osvojeniBodovi/pitanja.size
+        val tacnost = kvizTaken!!.osvojeniBodovi
         val porukaFragment = FragmentPoruka.newInstance(
                 "Završili ste kviz ${kviz!!.naziv} sa tačnosti $tacnost")
         val tag = "rezultat"
@@ -155,7 +153,15 @@ class FragmentPokusaj(
 //    }
 
     fun openPorukaZavrsenKviz() {
-        pitanjaKvizViewModel.otvoriPorukuZavrsenKviz(::openPorukaFragment,kvizTaken!!.KvizId)
+        pitanjaKvizViewModel.zavrsiKvizOtvoriPoruku(::openPorukaFragment,kvizTaken!!,pitanja)
+    }
+
+    fun vratiNaPrethodno() {
+        val actionFragKvizovi  = fun () {
+            (activity as MainActivity).vratiNaKvizove()
+        }
+        pitanjaKvizViewModel.vratiPrethodniFragment(::vratiNaProsloPitanje,actionFragKvizovi,
+                                                    pitanja,kvizTaken!!)
     }
 
     companion object {

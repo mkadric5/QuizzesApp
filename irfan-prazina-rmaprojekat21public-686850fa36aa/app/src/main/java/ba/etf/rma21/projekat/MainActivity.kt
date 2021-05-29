@@ -93,10 +93,9 @@ class MainActivity : AppCompatActivity() {
         val trenutni = supportFragmentManager.fragments.last()
         if (trenutni is FragmentKvizovi)
             return
-//        else if (trenutni is FragmentPokusaj &&
-//                trenutni.pitanjaOdgovorena().contains(true)) {
-//                    trenutni.vratiNaProsloPitanje()
-//            }
+        else if (trenutni is FragmentPokusaj) {
+                    trenutni.vratiNaPrethodno()
+            }
         else
             bottomNavigation.selectedItemId = R.id.kvizovi
 
@@ -118,5 +117,9 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.menu.findItem(R.id.zaustaviKviz).isVisible = false
         bottomNavigation.menu.findItem(R.id.kvizovi).isVisible = true
         bottomNavigation.menu.findItem(R.id.predmeti).isVisible = true
+    }
+
+    fun vratiNaKvizove() {
+        bottomNavigation.selectedItemId = R.id.kvizovi
     }
 }

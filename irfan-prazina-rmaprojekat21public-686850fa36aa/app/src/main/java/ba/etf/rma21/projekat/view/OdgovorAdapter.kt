@@ -16,7 +16,7 @@ import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 
 class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val elements: List<String>,
                      private val kvizTaken: KvizTaken?, private val pitanje: Pitanje, private val dosadasnjiOdgovor: List<Odgovor>,
-                     private var predatKviz: Boolean,
+                     private var brojPitanja: Int,
                      private var needToBeDisabled: Boolean, private var pokusajFragment: Fragment, private var tag: String):
         ArrayAdapter<String>(context, layoutResource, elements) {
     private val pitanjaKvizViewModel = PitanjeKvizViewModel()
@@ -49,7 +49,7 @@ class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: In
             //Da li je odgovoreno na pitanje?
             if (dosadasnjiOdgovor.isNotEmpty()) {
                 val odgovorPrijasnji = dosadasnjiOdgovor[0]
-                if (tekstOdgovor.text == elements[odgovorPrijasnji.indeksOdgovora]) {
+                if (odgovorPrijasnji.indeksOdgovora < pitanje.opcije.size && tekstOdgovor.text == elements[odgovorPrijasnji.indeksOdgovora]) {
                     if (tekstOdgovor.text != pitanje.opcije[pitanje.tacan]) {
                         tekstOdgovor.setBackgroundColor(Color.parseColor("#DB4F3D"))
                         (pokusajFragment as FragmentPokusaj).postaviBojuZaNavigacijaPitanje(
@@ -60,6 +60,10 @@ class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: In
                         tag.toInt() - 1, true
                     )
                 }
+                else if (odgovorPrijasnji.indeksOdgovora == pitanje.opcije.size)
+                    (pokusajFragment as FragmentPokusaj).postaviBojuZaNavigacijaPitanje(
+                        tag.toInt() - 1, false
+                    )
                 if(tekstOdgovor.text == elements[pitanje.tacan])
                     tekstOdgovor.setBackgroundColor(Color.parseColor("#3DDC84"))
                 needToBeDisabled = true
@@ -77,10 +81,9 @@ class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: In
                 )
 
                 parent.getChildAt(pitanje.tacan).setBackgroundColor(Color.parseColor("#3DDC84"))
+                val bodovi = ((tacnoOdgovoreno.compareTo(false).toDouble()/brojPitanja)*100).toInt()
                 pitanjaKvizViewModel.postaviOdgovor(
-                    kvizTaken!!.id, pitanje.id,
-                    parent.indexOfChild(it), tacnoOdgovoreno.compareTo(false)
-                )
+                    kvizTaken!!, pitanje.id, parent.indexOfChild(it),bodovi)
                 needToBeDisabled = true
                 }
             }
