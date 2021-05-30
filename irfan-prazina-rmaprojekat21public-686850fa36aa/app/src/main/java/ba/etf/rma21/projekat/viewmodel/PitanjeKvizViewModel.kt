@@ -54,10 +54,10 @@ class PitanjeKvizViewModel {
         }
     }
 
-    fun postaviOdgovor(kvizTaken: KvizTaken,idPitanje: Int,odgovor: Int, bodoviPitanje: Int) {
+    fun postaviOdgovor(kvizTaken: KvizTaken,idPitanje: Int,odgovor: Int) {
         scope.launch {
-            kvizTaken.osvojeniBodovi = (kvizTaken.osvojeniBodovi.toInt() + bodoviPitanje).toDouble()
-            OdgovorRepository.postaviOdgovorKviz(kvizTaken.id,idPitanje,odgovor,bodoviPitanje)
+            kvizTaken.osvojeniBodovi =
+                OdgovorRepository.postaviOdgovorKviz(kvizTaken.id,idPitanje,odgovor).toDouble()
         }
     }
 
@@ -83,7 +83,7 @@ class PitanjeKvizViewModel {
                 val odgovorZaPitanje = OdgovorRepository.dajOdgovoreZaPitanjeKviz(p.id,kvizTaken.KvizId)
                 //Da li je odgovoreno na pitanje
                 if (odgovorZaPitanje.isEmpty()) {
-                    postaviOdgovor(kvizTaken,p.id,p.opcije.size,0)
+                    postaviOdgovor(kvizTaken,p.id,p.opcije.size)
                 }
             }
             actionZavrsenKviz.invoke(KvizRepository.getById(kvizTaken.KvizId))

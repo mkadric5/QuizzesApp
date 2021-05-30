@@ -37,10 +37,14 @@ object OdgovorRepository {
         }
     }
 
-    suspend fun postaviOdgovorKviz(idKvizTaken: Int,idPitanje: Int,odgovor: Int,bodoviPitanje: Int): Int {
+    suspend fun postaviOdgovorKviz(idKvizTaken: Int,idPitanje: Int,odgovor: Int): Int {
         return withContext(Dispatchers.IO) {
             val kvizTaken = ApiAdapter.retrofit.dajSvePokusaje().body()!!.find { kt -> kt.id == idKvizTaken }
-            val osvojeniBodovi: Int = (kvizTaken!!.osvojeniBodovi + bodoviPitanje).toInt()
+            val pitanjaNaKvizu = PitanjeKvizRepository.getPitanja(kvizTaken!!.KvizId)
+            val pitanje = pitanjaNaKvizu.find { p -> p.id == idPitanje }
+            val bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
+                                toDouble()/pitanjaNaKvizu.size)*100).toInt()
+            val osvojeniBodovi: Int = (kvizTaken.osvojeniBodovi + bodoviPitanje).toInt()
             val response = ApiAdapter.retrofit.postaviOdgovorZaKviz(
                 AccountRepository.acHash, idKvizTaken,
                 OdgovorRequestBody(odgovor,idPitanje,osvojeniBodovi)

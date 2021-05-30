@@ -81,9 +81,8 @@ class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: In
                 )
 
                 parent.getChildAt(pitanje.tacan).setBackgroundColor(Color.parseColor("#3DDC84"))
-                val bodovi = ((tacnoOdgovoreno.compareTo(false).toDouble()/brojPitanja)*100).toInt()
                 pitanjaKvizViewModel.postaviOdgovor(
-                    kvizTaken!!, pitanje.id, parent.indexOfChild(it),bodovi)
+                    kvizTaken!!, pitanje.id, parent.indexOfChild(it))
                 needToBeDisabled = true
                 }
             }
