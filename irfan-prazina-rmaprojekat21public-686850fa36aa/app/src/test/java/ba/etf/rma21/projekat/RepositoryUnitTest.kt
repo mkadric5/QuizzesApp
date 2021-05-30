@@ -1,5 +1,6 @@
 package ba.etf.rma21.projekat
 
+
 import ba.etf.rma21.projekat.data.models.*
 import ba.etf.rma21.projekat.data.repositories.*
 
@@ -94,9 +95,7 @@ class RepositoryUnitTest {
         var result = OdgovorRepository.postaviOdgovorKviz(poceti!![poceti.size-1]?.id,pitanja!![0]?.id,pitanja!![0]?.tacan)
         assertThat(result,CoreMatchers.notNullValue())
         assertThat(result,CoreMatchers.equalTo(50))
-        // GREŠKA - poslan KvizTakenId umjesto KvizId
-//        val kritican = OdgovorRepository.getOdgovoriKviz(poceti!![poceti.size - 1]?.id)
-//        assertThat(OdgovorRepository.getOdgovoriKviz(poceti!![poceti.size-1]?.id)!!.size,CoreMatchers.equalTo(1))
+        assertThat(OdgovorRepository.getOdgovoriKviz(poceti!![poceti.size-1]?.KvizId)!!.size,CoreMatchers.equalTo(1))
     }
     @Test
     fun a9_provjeriKvizove() = runBlocking {
@@ -117,31 +116,31 @@ class RepositoryUnitTest {
             assertThat(propB,hasItem(trazeniProperty))
         }
     }
-//    @Test
-//    fun sveKlaseIspravne() {
-//        var pitanjeProperties = Pitanje::class.java.kotlin.members.map { it.name }
-//        var pitanjeTProperties = listOf("id","naziv","tekstPitanja","opcije","tacan")
-//        checkProperties(pitanjeTProperties,pitanjeProperties)
-//
-//        var kvizProperties = Kviz::class.java.kotlin.members.map {it.name}
-//        var kvizTProperties = listOf("id","naziv","datumPocetka","datumKraj","trajanje")
-//        checkProperties(kvizTProperties,kvizProperties)
-//
-//        var kvizTakenProperties = KvizTaken::class.java.kotlin.members.map { it.name }
-//        var kvizTakenTProperties = listOf("id","student","datumRada","osvojeniBodovi")
-//        checkProperties(kvizTakenTProperties,kvizTakenProperties)
-//
-//        var grupaProperties = Grupa::class.java.kotlin.members.map { it.name }
-//        var grupaTProperties = listOf("id","naziv")
-//        checkProperties(grupaTProperties,grupaProperties)
-//
-//        var predmetProperties = Predmet::class.java.kotlin.members.map { it.name }
-//        var predmetTProperties = listOf("id","naziv","godina")
-//        checkProperties(predmetTProperties,predmetProperties)
-//
-//        var odgovorProperties = Odgovor::class.java.kotlin.members.map { it.name }
-//        var odgovorTProperties = listOf("id","odgovoreno")
-//        checkProperties(odgovorTProperties,odgovorProperties)
-//    }
+    @Test
+    fun sveKlaseIspravne() {
+        var pitanjeProperties = Pitanje::class.java.kotlin.members.map { it.name }
+        var pitanjeTProperties = listOf("id","naziv","tekstPitanja","opcije","tacan")
+        checkProperties(pitanjeTProperties,pitanjeProperties)
+
+        var kvizProperties = Kviz::class.java.kotlin.members.map {it.name}
+        var kvizTProperties = listOf("id","naziv","datumPocetka","datumKraj","trajanje")
+        checkProperties(kvizTProperties,kvizProperties)
+
+        var kvizTakenProperties = KvizTaken::class.java.kotlin.members.map { it.name }
+        var kvizTakenTProperties = listOf("id","student","datumRada","osvojeniBodovi")
+        checkProperties(kvizTakenTProperties,kvizTakenProperties)
+
+        var grupaProperties = Grupa::class.java.kotlin.members.map { it.name }
+        var grupaTProperties = listOf("id","naziv")
+        checkProperties(grupaTProperties,grupaProperties)
+
+        var predmetProperties = Predmet::class.java.kotlin.members.map { it.name }
+        var predmetTProperties = listOf("id","naziv","godina")
+        checkProperties(predmetTProperties,predmetProperties)
+
+        var odgovorProperties = Odgovor::class.java.kotlin.members.map { it.name }
+        var odgovorTProperties = listOf("id","odgovoreno")
+        checkProperties(odgovorTProperties,odgovorProperties)
+    }
 
 }
