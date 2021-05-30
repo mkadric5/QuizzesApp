@@ -36,7 +36,7 @@ object TakeKvizRepository {
             return withContext(Dispatchers.IO) {
                 val response = ApiAdapter.retrofit.dajSvePokusaje()
                 val responseBody = response.body()
-//                if (responseBody!!.isEmpty()) return@withContext null
+                if (responseBody!!.isEmpty()) return@withContext null
                 return@withContext responseBody
             }
         }
