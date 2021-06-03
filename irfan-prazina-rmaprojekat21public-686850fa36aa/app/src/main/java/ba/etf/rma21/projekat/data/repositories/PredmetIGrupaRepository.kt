@@ -4,8 +4,6 @@ import ba.etf.rma21.projekat.data.models.ApiAdapter
 import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Poruka
 import ba.etf.rma21.projekat.data.models.Predmet
-import ba.etf.rma21.projekat.data.neupisaniPredmeti
-import ba.etf.rma21.projekat.data.upisaniPredmeti
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,8 +15,6 @@ object PredmetIGrupaRepository {
             var responseBody: List<Predmet>? = response.body()
             if (responseBody == null) {
                 responseBody = mutableListOf()
-                responseBody.addAll(upisaniPredmeti())
-                responseBody.addAll(neupisaniPredmeti())
             }
             return@withContext responseBody!!
         }
@@ -60,12 +56,18 @@ object PredmetIGrupaRepository {
 
     suspend fun getGrupeZaPredmet(idPredmeta: Int): List<Grupa> {
         return withContext(Dispatchers.IO) {
-            var response = ApiAdapter.retrofit.dajGrupeZaPredmet(idPredmeta)
-            var responseBody: List<Grupa>? = response.body()
-            if (responseBody == null) {
-                responseBody = mutableListOf()
+            try{
+                var response = ApiAdapter.retrofit.dajGrupeZaPredmet(idPredmeta)
+                var responseBody: List<Grupa>? = response.body()
+                if (responseBody == null) {
+                    responseBody = mutableListOf()
+                }
+                return@withContext responseBody!!
             }
-            return@withContext responseBody!!
+            catch(e: IllegalStateException) {
+                println("Greska u pozivu ka servisu")
+                return@withContext mutableListOf<Grupa>()
+            }
         }
     }
 
@@ -75,7 +77,7 @@ object PredmetIGrupaRepository {
             val response = ApiAdapter.retrofit.upisiuGrupu(idGrupa,idStudenta)
             var responseBodyObject: Poruka = response.body()!!
             var responseBody = responseBodyObject.poruka
-            if (responseBody == "Grupa not found" || responseBody == "Ne postoji account gdje je hash = $idStudenta")
+            if (responseBody == "Grupa not found." || responseBody == "Ne postoji account gdje je hash = $idStudenta")
                 return@withContext false
             return@withContext true
         }
@@ -83,13 +85,19 @@ object PredmetIGrupaRepository {
 
     suspend fun getUpisaneGrupe(): List<Grupa> {
         return withContext(Dispatchers.IO) {
-            val idStudenta = AccountRepository.getHash()
-            var response = ApiAdapter.retrofit.dajUpisaneGrupe(idStudenta)
-            var responseBody: List<Grupa>? = response.body()
-            if (responseBody == null) {
-                responseBody = mutableListOf()
+            try{
+                val idStudenta = AccountRepository.getHash()
+                var response = ApiAdapter.retrofit.dajUpisaneGrupe(idStudenta)
+                var responseBody: List<Grupa>? = response.body()
+                if (responseBody == null) {
+                    responseBody = mutableListOf()
+                }
+                return@withContext responseBody!!
             }
-            return@withContext responseBody!!
+            catch(e: IllegalStateException) {
+                println("Greska u pozivu ka servisu")
+                return@withContext mutableListOf<Grupa>()
+            }
         }
     }
 }

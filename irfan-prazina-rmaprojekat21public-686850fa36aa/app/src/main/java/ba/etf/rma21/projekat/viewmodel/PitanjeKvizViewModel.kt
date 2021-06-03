@@ -1,6 +1,5 @@
 package ba.etf.rma21.projekat.viewmodel
 
-import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.data.models.*
 import ba.etf.rma21.projekat.data.repositories.KvizRepository
 import ba.etf.rma21.projekat.data.repositories.OdgovorRepository
@@ -10,32 +9,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.reflect.KFunction1
 
 class PitanjeKvizViewModel {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-//    fun dajPitanjaZaKviz(kviz: Kviz): List<Pitanje> {
-//        return PitanjeKvizRepository.getPitanja(kviz.naziv,kviz.nazivPredmeta)
-//    }
-//
-//    fun dajPitanjeKvizZaPitanje(pitanje: Pitanje): PitanjeKviz {
-//        return PitanjeKvizRepository.getPitanjeKvizZaPitanje(pitanje)
-//    }
-//
-//    fun postaviOdgovor(pitanje: Pitanje, odgovor: Int) {
-//        PitanjeKvizRepository.postaviOdgovor(pitanje,odgovor)
-//    }
-//
-//    fun odgovoreno(pitanje: Pitanje): Boolean {
-//        val pitanjeKviz = dajPitanjeKvizZaPitanje(pitanje)
-//        return pitanjeKviz.odgovor != null
-//    }
-//
-//    fun tacnoOdgovoreno(pitanje: Pitanje): Boolean {
-//        val pitanjeKviz = dajPitanjeKvizZaPitanje(pitanje)
-//        return pitanjeKviz.odgovor == pitanje.tacan
-//    }
 
     fun otvoriPokusaj(actionKvizes: (kvizTaken: KvizTaken?, pitanja: List<Pitanje>,
                                      kviz: Kviz, predatKviz: Boolean) -> Unit,kviz: Kviz) {
@@ -48,10 +25,9 @@ class PitanjeKvizViewModel {
         }
     }
 
-    fun otvoriPitanje(actionPitanje: (pitanje: Pitanje,odgovori: List<Odgovor>) -> Unit,pitanje: Pitanje, idKviza: Int) {
-        scope.launch {
-            actionPitanje.invoke(pitanje,OdgovorRepository.getOdgovoriKviz(idKviza))
-        }
+    suspend fun isPredatKviz(kviz: Kviz, pitanja: List<Pitanje>): Boolean {
+        val dosadasnjiOdgovori = OdgovorRepository.getOdgovoriKviz(kviz.id)
+        return dosadasnjiOdgovori.size == pitanja.size
     }
 
     fun postaviOdgovor(kvizTaken: KvizTaken,idPitanje: Int,odgovor: Int) {

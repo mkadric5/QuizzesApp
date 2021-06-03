@@ -10,8 +10,8 @@ data class Kviz(
     @SerializedName("datumPocetak") val datumPocetka: Date,
     @SerializedName("datumKraj") val datumKraj: Date?,
 //    val datumRada: Date?,
-    @SerializedName("trajanje") val trajanje: Int
-//    val grupa: Grupa,
+    @SerializedName("trajanje") val trajanje: Int,
+    var predat: Boolean = false
 //    val osvojeniBodovi: Double?
 ) {
 }

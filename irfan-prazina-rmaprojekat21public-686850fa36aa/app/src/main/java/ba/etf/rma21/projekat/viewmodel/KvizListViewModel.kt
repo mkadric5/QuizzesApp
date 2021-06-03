@@ -1,115 +1,62 @@
 package ba.etf.rma21.projekat.viewmodel
 
-import android.util.Log
 import ba.etf.rma21.projekat.data.models.Kviz
-import ba.etf.rma21.projekat.data.models.KvizTaken
-import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.data.repositories.KvizRepository
 import ba.etf.rma21.projekat.data.repositories.PitanjeKvizRepository
-import ba.etf.rma21.projekat.data.repositories.TakeKvizRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
 
 class KvizListViewModel {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-//    fun dajMojeKvizove(): List<Kviz> {
-//        return KvizRepository.getMyKvizes().sortedWith(
-//                Comparator { k1, k2 -> k1.datumPocetak.compareTo(k2.datumPocetak)})
-//    }
 
     fun showKvizes(actionKvizes: ((kvizes: List<Kviz>) -> Unit),
                    filterNaziv: String) {
+        val pKVM = PitanjeKvizViewModel()
+        val date = Calendar.getInstance().time
         when(filterNaziv) {
             "Svi moji kvizovi" -> {
                 scope.launch {
-                    actionKvizes.invoke(KvizRepository.getUpisani())
+                    val kvizovi = KvizRepository.getUpisani()
+                    kvizovi.forEach { k ->
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                    }
+                    actionKvizes.invoke(kvizovi)
                 }
             }
             "Svi kvizovi" -> {
                 scope.launch {
-                    actionKvizes.invoke(KvizRepository.getAll())
+                    val kvizovi = KvizRepository.getAll()
+                    kvizovi.forEach { k ->
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                    }
+                    actionKvizes.invoke(kvizovi)
                 }
             }
             "Urađeni kvizovi" -> {
                 scope.launch {
-                    actionKvizes.invoke(KvizRepository.getAll())
+                    val kvizovi = KvizRepository.getUpisani()
+                    kvizovi.forEach { k ->
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                    }
+                    actionKvizes.invoke(kvizovi.filter { k -> k.predat })
                 }
             }
             "Budući kvizovi" -> {
                 scope.launch {
-                    actionKvizes.invoke(KvizRepository.getAll())
+                    val kvizovi = KvizRepository.getUpisani()
+                    actionKvizes.invoke(kvizovi.filter { k -> k.datumPocetka > date })
                 }
             }
             "Prošli kvizovi" -> {
                 scope.launch {
-                    actionKvizes.invoke(KvizRepository.getAll())
+                    val kvizovi = KvizRepository.getUpisani()
+                    actionKvizes.invoke(kvizovi.filter { k -> k.datumKraj != null && date > k.datumKraj })
                 }
             }
         }
     }
-
-//    fun dajMojeKvizove(): List<Kviz> {
-//        var result = upisaniKvizovi()
-//        scope.launch {
-//            // Vrši se poziv servisa i suspendira se rutina dok se `withContext` ne završi
-//            result = KvizRepository.getAll()
-//            // Prikaže se rezultat korisniku na glavnoj niti
-//        }
-//        return result
-//    }
-
-//    fun dajSveKvizove(): List<Kviz> {
-//        return KvizRepository.getAll().sortedWith(
-//                Comparator { k1, k2 -> k1.datumPocetak.compareTo(k2.datumPocetak)})
-//    }
-
-    fun dajSveKvizove(): List<Kviz> {
-        var result = listOf<Kviz>()
-        scope.launch {
-            // Vrši se poziv servisa i suspendira se rutina dok se `withContext` ne završi
-            result = KvizRepository.getAll()
-            // Prikaže se rezultat korisniku na glavnoj niti
-        }
-        return result
-    }
-
-//    fun dajMojeUradjeneKvizove(): List<Kviz> {
-//        return KvizRepository.getDone().sortedWith(
-//                Comparator { k1, k2 -> k1.datumPocetak.compareTo(k2.datumPocetak)})
-//    }
-
-    fun dajMojeUradjeneKvizove(): List<Kviz> {
-        return listOf()
-    }
-
-//    fun dajMojeBuduceKvizove(): List<Kviz> {
-//        return KvizRepository.getFuture().sortedWith(
-//                Comparator { k1, k2 -> k1.datumPocetak.compareTo(k2.datumPocetak)})
-//    }
-
-    fun dajMojeBuduceKvizove(): List<Kviz> {
-        return listOf()
-    }
-
-//    fun dajMojeNeuradjeneKvizove(): List<Kviz> {
-//        return KvizRepository.getNotTaken().sortedWith(
-//                Comparator { k1, k2 -> k1.datumPocetak.compareTo(k2.datumPocetak)})
-//    }
-
-    fun dajMojeNeuradjeneKvizove(): List<Kviz> {
-        return listOf()
-    }
-
-//    fun oznaciKvizKaoUradjen(kviz: Kviz, bodovi: Float) {
-//        PitanjeKvizRepository.oznaciNeodgovorena(kviz)
-//        KvizRepository.oznaciKaoUradjen(kviz,bodovi)
-//    }
-
-
-//    fun dajKviz(nazivKviza: String): Kviz {
-//        return KvizRepository.getKviz(nazivKviza)
-//    }
 }

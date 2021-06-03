@@ -39,17 +39,23 @@ object OdgovorRepository {
 
     suspend fun postaviOdgovorKviz(idKvizTaken: Int,idPitanje: Int,odgovor: Int): Int {
         return withContext(Dispatchers.IO) {
-            val kvizTaken = ApiAdapter.retrofit.dajSvePokusaje().body()!!.find { kt -> kt.id == idKvizTaken }
-            val pitanjaNaKvizu = PitanjeKvizRepository.getPitanja(kvizTaken!!.KvizId)
-            val pitanje = pitanjaNaKvizu.find { p -> p.id == idPitanje }
-            val bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
-                                toDouble()/pitanjaNaKvizu.size)*100).toInt()
-            val osvojeniBodovi: Int = (kvizTaken.osvojeniBodovi + bodoviPitanje).toInt()
-            val response = ApiAdapter.retrofit.postaviOdgovorZaKviz(
-                AccountRepository.acHash, idKvizTaken,
-                OdgovorRequestBody(odgovor,idPitanje,osvojeniBodovi)
-            )
-            return@withContext osvojeniBodovi
+            try{
+                val kvizTaken = ApiAdapter.retrofit.dajSvePokusaje().body()!!.find { kt -> kt.id == idKvizTaken }
+                val pitanjaNaKvizu = PitanjeKvizRepository.getPitanja(kvizTaken!!.KvizId)
+                val pitanje = pitanjaNaKvizu.find { p -> p.id == idPitanje }
+                val bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
+                toDouble()/pitanjaNaKvizu.size)*100).toInt()
+                val osvojeniBodovi: Int = (kvizTaken.osvojeniBodovi + bodoviPitanje).toInt()
+                val response = ApiAdapter.retrofit.postaviOdgovorZaKviz(
+                    AccountRepository.acHash, idKvizTaken,
+                    OdgovorRequestBody(odgovor,idPitanje,osvojeniBodovi)
+                )
+                return@withContext osvojeniBodovi
+            }
+            catch(e: Exception) {
+                println("Greska pri pozivu servisa")
+                return@withContext -1
+            }
         }
     }
 }

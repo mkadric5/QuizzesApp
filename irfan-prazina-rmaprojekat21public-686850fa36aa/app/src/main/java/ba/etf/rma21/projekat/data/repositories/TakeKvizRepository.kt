@@ -9,12 +9,20 @@ object TakeKvizRepository {
 
         suspend fun zapocniKviz(idKviza: Int): KvizTaken? {
             return withContext(Dispatchers.IO) {
-                val response = ApiAdapter.retrofit.zapocniKviz(AccountRepository.acHash,idKviza)
-                val responseBody = response.body()
-                //Kada se tek kreira KvizTaken, KvizId je postavljen na 0
-                if (responseBody != null)
-                    responseBody.KvizId = idKviza
-                return@withContext responseBody
+                try{
+                    val response = ApiAdapter.retrofit.zapocniKviz(AccountRepository.acHash,idKviza)
+                    val responseBody = response.body()
+                    if (responseBody!!.student == null)
+                        return@withContext null
+                    //Kada se tek kreira KvizTaken, KvizId je postavljen na 0
+                    if (responseBody != null)
+                        responseBody.KvizId = idKviza
+                    return@withContext responseBody
+                }
+                catch(e: Exception){
+                    println("Greska pri pozivu servisa")
+                    return@withContext null
+                }
             }
         }
 
@@ -34,10 +42,16 @@ object TakeKvizRepository {
 
         suspend fun getPocetiKvizovi(): List<KvizTaken>? {
             return withContext(Dispatchers.IO) {
-                val response = ApiAdapter.retrofit.dajSvePokusaje()
-                val responseBody = response.body()
-                if (responseBody!!.isEmpty()) return@withContext null
-                return@withContext responseBody
+                try{
+                    val response = ApiAdapter.retrofit.dajSvePokusaje()
+                    val responseBody = response.body()
+                    if (responseBody!!.isEmpty()) return@withContext null
+                    return@withContext responseBody
+                }
+                catch(e: Exception) {
+                    println("Greska pri pozivu servisa")
+                    return@withContext null
+                }
             }
         }
 }

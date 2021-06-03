@@ -71,7 +71,7 @@ class KvizAdapter(
 
         //bind slike kolora sa view- om i bind datuma sa textview-om
         val datumPocetka = dataSet[position].datumPocetka
-        val datumKraja = dataSet[position].datumKraj
+        var datumKraja = dataSet[position].datumKraj
 //        val datumRada = dataSet[position].datumRada
 //        val osvojeniBodovi = dataSet[position].osvojeniBodovi
         val datumRada = Calendar.getInstance().time
@@ -81,7 +81,7 @@ class KvizAdapter(
         val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
 //        if (osvojeniBodovi != null && datumRada != null) {
-        if (osvojeniBodovi != null) {
+        if (dataSet[position].predat) {
             bojaKviza = "plava"
             viewHolder.datumKviza.text = dateFormat.format(datumRada)
         }
@@ -96,10 +96,12 @@ class KvizAdapter(
             bojaKviza = "zuta"
             viewHolder.datumKviza.text = dateFormat.format(datumPocetka)
         }
-//        else {
-//            bojaKviza = "crvena"
-//            viewHolder.datumKviza.text = dateFormat.format(datumKraja)
-//        }
+        else {
+            bojaKviza = "crvena"
+            if (datumKraja == null)
+                datumKraja = Calendar.getInstance().time
+            viewHolder.datumKviza.text = dateFormat.format(datumKraja!!)
+        }
 
         val context = viewHolder.slikaKviza.context
         val id: Int = context.resources.getIdentifier(bojaKviza,"drawable", context.packageName)

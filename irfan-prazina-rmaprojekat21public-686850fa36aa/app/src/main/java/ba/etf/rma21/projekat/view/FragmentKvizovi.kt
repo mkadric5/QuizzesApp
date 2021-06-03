@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -78,6 +79,8 @@ class FragmentKvizovi: Fragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 //                updateLista(filterKvizova.selectedItem.toString())
+                val toast = Toast.makeText(context,"Dohvacanje kvizova",Toast.LENGTH_SHORT)
+                toast.show()
                 kvizListViewModel.showKvizes(::updateKvizove,filterKvizova.selectedItem.toString())
             }
         }
@@ -93,11 +96,15 @@ class FragmentKvizovi: Fragment() {
     }
 
     private fun openPokusajFragment(kvizTaken: KvizTaken?, pitanja: List<Pitanje>,kviz: Kviz, predatKviz: Boolean) {
-        val pokusajFragment = FragmentPokusaj.newInstance(kvizTaken, pitanja,predatKviz)
-        openPokusajFragmentInstance(pokusajFragment, kviz.naziv)
-        if (predatKviz)
-            (activity as MainActivity).hidePokusajItems()
-        else (activity as MainActivity).showPokusajItems()
+        if (filterKvizova.selectedItem.toString() != "Svi kvizovi") {
+            val toast = Toast.makeText(context,"Otvaranje kviza",Toast.LENGTH_SHORT)
+            toast.show()
+            val pokusajFragment = FragmentPokusaj.newInstance(kvizTaken, pitanja,predatKviz)
+            openPokusajFragmentInstance(pokusajFragment, kviz.naziv)
+            if (predatKviz)
+                (activity as MainActivity).hidePokusajItems()
+            else (activity as MainActivity).showPokusajItems()
+        }
     }
 
     companion object {
@@ -126,6 +133,8 @@ class FragmentKvizovi: Fragment() {
     }
 
     private fun updateKvizove(noviKvizovi: List<Kviz>) {
+        val toast = Toast.makeText(context,"Kvizovi dohvaceni",Toast.LENGTH_SHORT)
+        toast.show()
         kvizAdapter.updateDataSet(noviKvizovi)
     }
 }

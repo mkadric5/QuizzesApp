@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.KvizTaken
@@ -39,6 +40,8 @@ class FragmentPitanje(
     }
 
     private fun popuniAdapter(dosadasnjiOdgovori: List<Odgovor>) {
+        val toast = Toast.makeText(context,"Otvoreno pitanje", Toast.LENGTH_SHORT)
+        toast.show()
         listaOdgovoraAdapter = OdgovorAdapter(view!!.context,android.R.layout.simple_list_item_1,pitanje.opcije,kvizTaken,
             pitanje, dosadasnjiOdgovori,brojPitanja,false,parentFragment!!,tag!!)
         listaOdgovora.adapter = listaOdgovoraAdapter

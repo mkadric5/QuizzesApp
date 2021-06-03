@@ -11,18 +11,7 @@ import kotlinx.coroutines.launch
 
 class UpisPredmetViewModel {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
-    private val predmeti = mutableListOf<Predmet>()
-//    fun dajOPredmeteZaGodinu(godina: Int): List<String> {
-//        return PredmetRepository.dajOstalePredmeteZaGodinu(godina)
-//    }
 
-    fun dajOPredmeteZaGodinu(godina: Int): List<String> {
-        var result = listOf<String>()
-        scope.launch {
-            result = PredmetIGrupaRepository.getNeupisaniPredmeti().map { p -> p.naziv }
-        }
-        return result
-    }
 
     fun popuniPredmeteZaGodinu(actionPredmeti: ((predmeti: List<Predmet>) -> Unit), godina: Int) {
         scope.launch {
@@ -52,10 +41,4 @@ class UpisPredmetViewModel {
                 actionUpis.invoke(fragmentPoruka)
         }
     }
-
-//    fun upisiKorisnika(grupaNaziv: String, predmetNaziv: String) {
-//        KvizRepository.dodajKviz(grupaNaziv, predmetNaziv)
-//        GrupaRepository.upisiUGrupu(grupaNaziv, predmetNaziv)
-//        PredmetRepository.upisiNaPredmet(predmetNaziv)
-//    }
 }
