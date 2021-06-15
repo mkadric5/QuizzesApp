@@ -1,14 +1,17 @@
 package ba.etf.rma21.projekat.view
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma21.projekat.R
 import ba.etf.rma21.projekat.data.models.Kviz
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class KvizAdapter(
@@ -43,22 +46,22 @@ class KvizAdapter(
         return ViewHolder(view)
     }
     // Izmijeni sadržaj view-a
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         //Pokupi element iz skupa podataka i zamijeni
         //sadržaj View sa odgovarajućim
 
         //bind naziva predmeta, naziva kviza, trajanja kviza
 //        viewHolder.nazivPredmeta.text = dataSet[position].nazivPredmeta
-        if (dataSet[position].predmeti!!.isEmpty())
+        if (dataSet[position].predmeti.isEmpty())
             viewHolder.nazivPredmeta.text = "Predmet"
         else {
-            var predmeti = ""
-            for (i in 0 until dataSet[position].predmeti!!.size) {
-                predmeti += dataSet[position].predmeti!![i].naziv
-                if (i != dataSet[position].predmeti!!.size-1)
-                    predmeti+=", "
-            }
-            viewHolder.nazivPredmeta.text = predmeti
+//            for (i in 0 until dataSet[position].predmeti!!.size) {
+//                predmeti += dataSet[position].predmeti!![i].naziv
+//                if (i != dataSet[position].predmeti!!.size-1)
+//                    predmeti+=", "
+//            }
+            viewHolder.nazivPredmeta.text = dataSet[position].predmeti
         }
         viewHolder.nazivKviza.text = dataSet[position].naziv
         viewHolder.trajanjeKviza.text = dataSet[position].trajanje.toString().plus(" min")
@@ -70,36 +73,41 @@ class KvizAdapter(
         viewHolder.bodoviNaKvizu.text = "5"
 
         //bind slike kolora sa view- om i bind datuma sa textview-om
-        val datumPocetka = dataSet[position].datumPocetka
-        var datumKraja = dataSet[position].datumKraj
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val datumPocetka = LocalDate.parse(dataSet[position].datumPocetak,formatter)
+        var datumKraja: LocalDate
+        datumKraja = if (dataSet[position].datumKraj == null)
+            LocalDate.of(2025,10,10)
+        else LocalDate.parse(dataSet[position].datumKraj,formatter)
 //        val datumRada = dataSet[position].datumRada
 //        val osvojeniBodovi = dataSet[position].osvojeniBodovi
         val datumRada = Calendar.getInstance().time
         val osvojeniBodovi = null
         var bojaKviza: String = "zelena"
 
-        val dateFormat = SimpleDateFormat("dd.MM.yyyy")
+        val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
 //        if (osvojeniBodovi != null && datumRada != null) {
-        if (dataSet[position].predat) {
-            bojaKviza = "plava"
-            viewHolder.datumKviza.text = dateFormat.format(datumRada)
-        }
+//        if (dataSet[position].predat) {
+//            bojaKviza = "plava"
+//            viewHolder.datumKviza.text = dateFormat.format(datumRada)
+//        }
 //        else if (datumKraja > Calendar.getInstance().time && Calendar.getInstance().time > datumPocetka) {
-        else if (Calendar.getInstance().time > datumPocetka) {
+        //else
+            if (LocalDate.now() > datumPocetka) {
             bojaKviza = "zelena"
 //            viewHolder.datumKviza.text = dateFormat.format(datumKraja)
             viewHolder.datumKviza.text = dateFormat.format(datumPocetka)
         }
 
-        else if (datumPocetka > Calendar.getInstance().time) {
+        else if (datumPocetka > LocalDate.now()) {
             bojaKviza = "zuta"
             viewHolder.datumKviza.text = dateFormat.format(datumPocetka)
         }
         else {
             bojaKviza = "crvena"
             if (datumKraja == null)
-                datumKraja = Calendar.getInstance().time
+                datumKraja = LocalDate.now()
             viewHolder.datumKviza.text = dateFormat.format(datumKraja!!)
         }
 

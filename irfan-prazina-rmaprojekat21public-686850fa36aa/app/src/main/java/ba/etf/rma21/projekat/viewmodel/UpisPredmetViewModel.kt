@@ -1,8 +1,12 @@
 package ba.etf.rma21.projekat.viewmodel
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.data.models.Grupa
 import ba.etf.rma21.projekat.data.models.Predmet
+import ba.etf.rma21.projekat.data.repositories.AccountRepository
 import ba.etf.rma21.projekat.data.repositories.PredmetIGrupaRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +43,17 @@ class UpisPredmetViewModel {
         scope.launch {
             if (PredmetIGrupaRepository.upisiUGrupu(grupaId))
                 actionUpis.invoke(fragmentPoruka)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun postaviAccHash(acHash: String, context: Context) {
+        scope.launch {
+            AccountRepository.setContext(context)
+            if (acHash == "postavi_moj")
+                AccountRepository.postaviHash(AccountRepository.acHash)
+            else
+                AccountRepository.postaviHash(acHash)
         }
     }
 }

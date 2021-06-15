@@ -81,8 +81,7 @@ class FragmentPredmeti: Fragment() {
             val predmetItem = odabirPredmet.selectedItem
             val grupaItem = odabirGrupa.selectedItem
             if (godinaItem != null && predmetItem != null && grupaItem != null) {
-//                (activity as MainActivity).showPorukaFragment(
-//                        "Uspješno ste upisani u grupu ${grupaItem} predmeta ${predmetItem}!")
+
                 val porukaFragment = FragmentPoruka.newInstance(
                         "Uspješno ste upisani u grupu $grupaItem predmeta ${predmetItem}!")
                 upisPredmetViewModel.upisiKorisnika(::openPorukaFragment,porukaFragment,(grupaItem as Grupa).id)

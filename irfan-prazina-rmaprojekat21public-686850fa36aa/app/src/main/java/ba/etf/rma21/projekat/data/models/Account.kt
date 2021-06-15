@@ -1,10 +1,16 @@
 package ba.etf.rma21.projekat.data.models
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
+@Entity
 data class Account(
-    @SerializedName("id") val id: Int,
-    @SerializedName("student") val emailStudenta: String,
-    @SerializedName("acHash") val acHash: String
+    @PrimaryKey @SerializedName("id") val id: Int,
+    @ColumnInfo(name = "student") @SerializedName("student") val emailStudenta: String,
+    @ColumnInfo(name = "acHash") @SerializedName("acHash") val acHash: String,
+    @ColumnInfo(name = "lastUpdate") val lastUpdate: String
 ) {
 }

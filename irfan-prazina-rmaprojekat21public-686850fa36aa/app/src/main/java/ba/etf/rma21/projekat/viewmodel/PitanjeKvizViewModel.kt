@@ -17,11 +17,11 @@ class PitanjeKvizViewModel {
     fun otvoriPokusaj(actionKvizes: (kvizTaken: KvizTaken?, pitanja: List<Pitanje>,
                                      kviz: Kviz, predatKviz: Boolean) -> Unit,kviz: Kviz) {
         scope.launch {
-            val pitanja = PitanjeKvizRepository.getPitanja(kviz.id)
+            val pitanja = PitanjeKvizRepository.getPitanjaDB(kviz.id)
             val dosadasnjiOdgovori = OdgovorRepository.getOdgovoriKviz(kviz.id)
             actionKvizes.invoke(
                 TakeKvizRepository.dajPokusajZaKviz(kviz.id),
-                pitanja,kviz,dosadasnjiOdgovori.size == pitanja.size)
+                pitanja,kviz,kviz.predat)
         }
     }
 
@@ -33,13 +33,13 @@ class PitanjeKvizViewModel {
     fun postaviOdgovor(kvizTaken: KvizTaken,idPitanje: Int,odgovor: Int) {
         scope.launch {
             kvizTaken.osvojeniBodovi =
-                OdgovorRepository.postaviOdgovorKviz(kvizTaken.id,idPitanje,odgovor).toDouble()
+                OdgovorRepository.postaviOdgovorKvizDB(kvizTaken.id,idPitanje,odgovor).toDouble()
         }
     }
 
     fun popuniOdgovore(actionOdgovori: (odgovori: List<Odgovor>) -> Unit, idKviza: Int, idPitanja: Int) {
         scope.launch {
-            val odgovori = OdgovorRepository.dajOdgovoreZaPitanjeKviz(idPitanja,idKviza)
+            val odgovori = OdgovorRepository.dajOdgovoreZaPitanjeKvizDB(idPitanja,idKviza)
 //            if (odgovori.isNotEmpty())
 //                println("odgovarano je")
 //            else println("nije odgovarano")
@@ -49,20 +49,21 @@ class PitanjeKvizViewModel {
 
     fun otvoriPorukuZavrsenKviz(actionZavrsenKviz: (kviz: Kviz?) -> Unit,idKviza: Int) {
         scope.launch {
-            actionZavrsenKviz.invoke(KvizRepository.getById(idKviza))
+            actionZavrsenKviz.invoke(KvizRepository.getByIdDB(idKviza))
         }
     }
 
     fun zavrsiKvizOtvoriPoruku(actionZavrsenKviz: (kviz: Kviz?) -> Unit,kvizTaken: KvizTaken, pitanja: List<Pitanje>) {
         scope.launch {
             pitanja.forEach { p ->
-                val odgovorZaPitanje = OdgovorRepository.dajOdgovoreZaPitanjeKviz(p.id,kvizTaken.KvizId)
+                val odgovorZaPitanje = OdgovorRepository.dajOdgovoreZaPitanjeKvizDB(p.id,kvizTaken.KvizId)
                 //Da li je odgovoreno na pitanje
                 if (odgovorZaPitanje.isEmpty()) {
                     postaviOdgovor(kvizTaken,p.id,p.opcije.size)
                 }
             }
-            actionZavrsenKviz.invoke(KvizRepository.getById(kvizTaken.KvizId))
+            OdgovorRepository.predajOdgovoreDB(kvizTaken.KvizId)
+            actionZavrsenKviz.invoke(KvizRepository.getByIdDB(kvizTaken.KvizId))
         }
     }
 

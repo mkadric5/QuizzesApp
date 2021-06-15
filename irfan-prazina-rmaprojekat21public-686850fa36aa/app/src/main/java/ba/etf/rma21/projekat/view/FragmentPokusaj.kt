@@ -1,6 +1,7 @@
 package ba.etf.rma21.projekat.view
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.MainActivity
 import ba.etf.rma21.projekat.R
@@ -18,6 +20,7 @@ import ba.etf.rma21.projekat.viewmodel.KvizListViewModel
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 import com.google.android.material.navigation.NavigationView
 
+@RequiresApi(Build.VERSION_CODES.O)
 class FragmentPokusaj(
     private var kvizTaken: KvizTaken?,
     private var pitanja: List<Pitanje>,
@@ -124,34 +127,6 @@ class FragmentPokusaj(
         transaction.commit()
         navigacijaPitanja.menu.getItem(pitanja.size).isVisible = true
     }
-
-//    private fun dajTacnost(): String {
-//        return (dajBrojTacnih().toFloat()/pitanja.size * 100).toString() + "%"
-//    }
-
-//    private fun dajNazivKviza(): String {
-//        return pitanjaKvizViewModel.dajPitanjeKvizZaPitanje(pitanja[0]).kviz
-//    }
-
-//    fun dajKviz(): Kviz {
-//        return kvizListViewModel.dajKviz(dajNazivKviza())
-//    }
-
-//    private fun dajBrojTacnih(): Int {
-//        return pitanja.map{
-//            p -> pitanjaKvizViewModel.tacnoOdgovoreno(p)
-//        }.count { o -> o }
-//    }
-
-//    fun dajBodove(): Float {
-//        return dajBrojTacnih().toFloat()
-//    }
-
-//    fun pitanjaOdgovorena(): List<Boolean> {
-//        return pitanja.map {
-//            p -> pitanjaKvizViewModel.odgovoreno(p)
-//        }
-//    }
 
     fun openPorukaZavrsenKviz() {
         pitanjaKvizViewModel.zavrsiKvizOtvoriPoruku(::openPorukaFragment,kvizTaken!!,pitanja)

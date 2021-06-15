@@ -1,5 +1,11 @@
 package ba.etf.rma21.projekat.data.repositories
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import ba.etf.rma21.projekat.data.AppDatabase
 import ba.etf.rma21.projekat.data.models.ApiAdapter
 import ba.etf.rma21.projekat.data.models.Kviz
 import kotlinx.coroutines.Dispatchers
@@ -7,7 +13,15 @@ import kotlinx.coroutines.withContext
 import java.lang.IllegalStateException
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("StaticFieldLeak")
 object KvizRepository {
+
+    private lateinit var context: Context
+
+    fun setContext(_context: Context){
+        context=_context
+    }
 
     suspend fun getAll(): List<Kviz> {
         return withContext(Dispatchers.IO) {
@@ -22,11 +36,17 @@ object KvizRepository {
 
     private suspend fun popuniPredmeteZaKviz(kviz: Kviz) {
         val grupeZaKviz = ApiAdapter.retrofit.dajGrupeZaKviz(kviz.id).body()
-        kviz.predmeti = mutableListOf()
+        val kvizPredmeti = mutableListOf<String>()
         grupeZaKviz!!.forEach { grupa ->
             val predmet = ApiAdapter.retrofit.dajPredmet(grupa.predmetId).body()!!
-            if (!kviz.predmeti!!.any { p -> p.naziv == predmet.naziv })
-                kviz.predmeti!!.add(predmet)
+            if (!kvizPredmeti.contains(predmet.naziv))
+                kvizPredmeti.add(predmet.naziv)
+        }
+        kviz.predmeti=""
+        for (i in 0 until kvizPredmeti.size) {
+            kviz.predmeti+= kvizPredmeti[i]
+            if (i != kvizPredmeti.size-1)
+                kviz.predmeti+= ","
         }
     }
 
@@ -41,6 +61,11 @@ object KvizRepository {
                     return@withContext null
                 }
             }
+        }
+
+        suspend fun getByIdDB(idKviza: Int): Kviz {
+            val db = AppDatabase.getInstance(context)
+            return db.kvizDao().getKviz(idKviza)
         }
 
         suspend fun getUpisani(): List<Kviz> {
@@ -61,7 +86,22 @@ object KvizRepository {
                     }
                 }
                 upisaniKvizovi.forEach { kviz -> popuniPredmeteZaKviz(kviz) }
-                return@withContext upisaniKvizovi
+
+                return@withContext upisaniKvizovi.distinctBy { k -> k.id }
+            }
+        }
+
+        suspend fun getUpisaniDB(): List<Kviz> {
+            return withContext(Dispatchers.IO) {
+                val db = AppDatabase.getInstance(context)
+                return@withContext db.kvizDao().getAll()
+            }
+        }
+
+        suspend fun oznaciKaoPredan(idKviza: Int) {
+            return withContext(Dispatchers.IO) {
+                val db = AppDatabase.getInstance(context)
+                db.kvizDao().oznaciKaoUradjen(idKviza,true)
             }
         }
     }

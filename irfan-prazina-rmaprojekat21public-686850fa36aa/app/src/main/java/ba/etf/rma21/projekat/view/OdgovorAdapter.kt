@@ -2,17 +2,20 @@ package ba.etf.rma21.projekat.view
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import ba.etf.rma21.projekat.data.models.KvizTaken
 import ba.etf.rma21.projekat.data.models.Odgovor
 import ba.etf.rma21.projekat.data.models.Pitanje
 import ba.etf.rma21.projekat.viewmodel.PitanjeKvizViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 class OdgovorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val elements: List<String>,
                      private val kvizTaken: KvizTaken?, private val pitanje: Pitanje, private val dosadasnjiOdgovor: List<Odgovor>,
                      private var brojPitanja: Int,

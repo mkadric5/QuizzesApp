@@ -5,10 +5,7 @@ import ba.etf.rma21.projekat.data.models.Kviz
 import ba.etf.rma21.projekat.data.models.Predmet
 import ba.etf.rma21.projekat.data.repositories.AccountRepository
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface Api {
 
@@ -106,4 +103,12 @@ interface Api {
         @Path("ktid") idKvizTaken: Int,
         @Body odgovorRequest: OdgovorRequestBody
     ): Response<Odgovor>
+
+    //Da li je bilo promjene nad predmetima, grupama, kvizovima ili pitanjima
+    @GET("/account/{id}/lastUpdate")
+    suspend fun isChanged(
+        @Path("id") idStudenta: String,
+        @Query("date") datum: String
+    ): Response<ResponseChange>
+
 }
