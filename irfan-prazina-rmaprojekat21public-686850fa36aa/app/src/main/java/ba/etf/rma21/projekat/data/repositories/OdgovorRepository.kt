@@ -16,16 +16,17 @@ import kotlinx.coroutines.withContext
 object OdgovorRepository {
 
     private lateinit var context: Context
+    private var maxId: Int = 0
 
     fun setContext(_context: Context){
         context=_context
     }
 
 
-    suspend fun getOdgovoriKviz(idKviza: Int): List<Odgovor> {
+    suspend fun getOdgovoriKvizApi(idKviza: Int): List<Odgovor> {
         return withContext(Dispatchers.IO) {
             val odgovoriZaKviz = mutableListOf<Odgovor>()
-            var sviPokusaji = TakeKvizRepository.getPocetiKvizovi()
+            var sviPokusaji = TakeKvizRepository.getPocetiKvizoviApi()
             if (sviPokusaji == null) {
                 return@withContext odgovoriZaKviz
             }
@@ -45,33 +46,39 @@ object OdgovorRepository {
         }
     }
 
-    suspend fun getOdgovoriKvizDB(idKviza: Int): List<Odgovor> {
+    suspend fun getOdgovoriKviz(idKviza: Int): List<Odgovor> {
         return withContext(Dispatchers.IO) {
             val db = AppDatabase.getInstance(context)
             return@withContext db.odgovorDao().getOdgovorZaKviz(idKviza)
         }
     }
 
+    suspend fun dajOdgovoreZaPitanjeKvizApi(idPitanja: Int, idKviza: Int): List<Odgovor> {
+        return withContext(Dispatchers.IO) {
+            return@withContext getOdgovoriKvizApi(idKviza).filter { o -> o.pitanjeId == idPitanja }
+        }
+    }
+
     suspend fun dajOdgovoreZaPitanjeKviz(idPitanja: Int, idKviza: Int): List<Odgovor> {
         return withContext(Dispatchers.IO) {
-            return@withContext getOdgovoriKviz(idKviza).filter { o -> o.pitanjeId == idPitanja }
+            return@withContext getOdgovoriKviz(idKviza).filter { o -> o.pitanjeId == idPitanja
+                    && o.kvizId == idKviza }
         }
     }
 
-    suspend fun dajOdgovoreZaPitanjeKvizDB(idPitanja: Int, idKviza: Int): List<Odgovor> {
-        return withContext(Dispatchers.IO) {
-            return@withContext getOdgovoriKvizDB(idKviza).filter { o -> o.pitanjeId == idPitanja }
-        }
-    }
-
-    suspend fun postaviOdgovorKviz(idKvizTaken: Int,idPitanje: Int,odgovor: Int): Int {
+    suspend fun postaviOdgovorKvizApi(idKvizTaken: Int, idPitanje: Int, odgovor: Int): Int {
         return withContext(Dispatchers.IO) {
             try{
                 val kvizTaken = ApiAdapter.retrofit.dajSvePokusaje().body()!!.find { kt -> kt.id == idKvizTaken }
-                val pitanjaNaKvizu = PitanjeKvizRepository.getPitanja(kvizTaken!!.KvizId)
+                val pitanjaNaKvizu = PitanjeKvizRepository.getPitanjaApi(kvizTaken!!.KvizId)
                 val pitanje = pitanjaNaKvizu.find { p -> p.id == idPitanje }
-                val bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
+                var bodoviPitanje: Int
+
+                if (odgovor == pitanje!!.opcije.size)
+                    bodoviPitanje = 0
+                else bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
                 toDouble()/pitanjaNaKvizu.size)*100).toInt()
+
                 val osvojeniBodovi: Int = (kvizTaken.osvojeniBodovi + bodoviPitanje).toInt()
                 val response = ApiAdapter.retrofit.postaviOdgovorZaKviz(
                     AccountRepository.acHash, idKvizTaken,
@@ -86,41 +93,49 @@ object OdgovorRepository {
         }
     }
 
-    suspend fun postaviOdgovorKvizDB(idKvizTaken: Int,idPitanje: Int,odgovor: Int): Int {
+    suspend fun postaviOdgovorKviz(idKvizTaken: Int, idPitanje: Int, odgovor: Int): Int {
         return withContext(Dispatchers.IO) {
             try{
                 val db = AppDatabase.getInstance(context)
                 val kvizTaken = db.kvizTakenDao().getKvizTaken(idKvizTaken)
-                val pitanjaNaKvizu = PitanjeKvizRepository.getPitanjaDB(kvizTaken.KvizId)
+                val pitanjaNaKvizu = PitanjeKvizRepository.getPitanja(kvizTaken.KvizId)
                 val pitanje = pitanjaNaKvizu.find { p -> p.id == idPitanje }
-                val bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
+                var bodoviPitanje: Int
+
+                if (odgovor == pitanje!!.opcije.size)
+                    bodoviPitanje = 0
+                else bodoviPitanje = (((odgovor == pitanje!!.tacan).compareTo(false).
                 toDouble()/pitanjaNaKvizu.size)*100).toInt()
+
                 val osvojeniBodovi: Int = (kvizTaken.osvojeniBodovi + bodoviPitanje).toInt()
 
-                val dosadasnjiOdg = db.odgovorDao().getAll().find{ o -> o.pitanjeId == idPitanje}
-                if (dosadasnjiOdg != null)
+                val dosadasnjiOdg = db.odgovorDao().getAll().find{ o -> o.pitanjeId == idPitanje && o.kvizId == kvizTaken.KvizId}
+                if (dosadasnjiOdg != null) {
                     return@withContext kvizTaken.osvojeniBodovi.toInt()
+                }
+
                 else {
-                    val rownum = db.odgovorDao().getRowNum()
+//                    val rownum = db.odgovorDao().getRowNum()
                     db.odgovorDao().insertOdgovor(
-                        Odgovor(rownum,odgovor,idKvizTaken,idPitanje,kvizTaken.KvizId)
+                        Odgovor(maxId+1,odgovor,idKvizTaken,idPitanje,kvizTaken.KvizId)
                     )
+                    maxId+= 1
                     db.kvizTakenDao().updateKTBodovi(idKvizTaken,osvojeniBodovi)
                     return@withContext osvojeniBodovi
                 }
             }
             catch(e: Exception) {
-                println("Greska pri pozivu servisa")
+//                Log.e("GRESKA",e.printStackTrace().toString())
                 return@withContext -1
             }
         }
     }
 
-    suspend fun predajOdgovoreDB(idKviza: Int): Int {
+    suspend fun predajOdgovore(idKviza: Int): Int {
         return withContext(Dispatchers.IO) {
             var osvojeniBodovi = 0
-             getOdgovoriKvizDB(idKviza).forEach{ o ->
-                osvojeniBodovi = postaviOdgovorKviz(o.kvizTakenId,o.pitanjeId,o.odgovoreno)
+             getOdgovoriKviz(idKviza).forEach{ o ->
+                osvojeniBodovi = postaviOdgovorKvizApi(o.kvizTakenId,o.pitanjeId,o.odgovoreno)
             }
             KvizRepository.oznaciKaoPredan(idKviza)
             return@withContext osvojeniBodovi

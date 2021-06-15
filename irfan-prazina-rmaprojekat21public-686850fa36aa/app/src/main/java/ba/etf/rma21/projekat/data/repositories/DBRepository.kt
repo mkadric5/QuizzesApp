@@ -3,7 +3,6 @@ package ba.etf.rma21.projekat.data.repositories
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import ba.etf.rma21.projekat.data.AppDatabase
 import ba.etf.rma21.projekat.data.models.ApiAdapter
@@ -30,7 +29,7 @@ object DBRepository {
             val datum = AccountRepository.getLastUpdate()
             val change = ApiAdapter.retrofit.isChanged(hash,datum)
             if (change.body()!!.changed) {
-                Log.e("PORUKA","IMA UPDATE")
+//                Log.e("PORUKA","IMA UPDATE")
                 //Datum i vrijeme azuriranja
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
                 val date = LocalDateTime.now().format(formatter).toString()
@@ -45,22 +44,32 @@ object DBRepository {
                 db.predmetDao().insertPredmet(*predmeti.toTypedArray())
 
                 //Azuriranje kvizova
-                val kvizovi = KvizRepository.getUpisani()
-                db.kvizDao().deleteAll()
-                db.kvizDao().insertKviz(*kvizovi.toTypedArray())
+                val kvizovi = KvizRepository.getUpisaniApi()
+                val kvizoviSPokusajemId = db.kvizTakenDao().getAll().map{ kt -> kt.KvizId }.toMutableList()
+                val kvizoviBezPokusajaId = kvizovi.map{ k -> k.id }.minus(kvizoviSPokusajemId).toMutableList()
+                db.kvizDao().deleteAllExcept(kvizoviSPokusajemId)
+                val nepocetiKvizovi = kvizovi.filter { k -> kvizoviBezPokusajaId.contains(k.id) }
+                db.kvizDao().insertKviz(*nepocetiKvizovi.toTypedArray())
 
                 //Azuriranje pitanja
                 var pitanja = mutableListOf<Pitanje>()
-                kvizovi.forEach { k -> pitanja.addAll(PitanjeKvizRepository.getPitanja(k.id)) }
-                pitanja = pitanja.distinctBy { p -> p.id }.toMutableList()
-                db.pitanjeDao().deleteAll()
+                kvizoviSPokusajemId.forEach { k ->
+                    val pitanjaZaKSP = db.pitanjeDao().getPitanjaZaKviz(k)
+                    if (pitanjaZaKSP.isEmpty()) {
+                        kvizoviSPokusajemId.remove(k)
+                        kvizoviBezPokusajaId.add(k)
+                    }
+                }
+                kvizoviBezPokusajaId.forEach { k ->
+                    pitanja.addAll(PitanjeKvizRepository.getPitanjaApi(k)) }
+                db.pitanjeDao().deleteAllExcept(kvizoviSPokusajemId)
                 db.pitanjeDao().insertPitanje(*pitanja.toTypedArray())
 
                 //Upisuje se vrijeme posljednjeg azuriranja
                 db.accDao().setLastUpdate(date)
                 return@withContext true
             }
-            Log.e("PORUKA","NEMA UPDATE")
+//            Log.e("PORUKA","NEMA UPDATE")
             return@withContext false
         }
     }

@@ -2,6 +2,7 @@ package ba.etf.rma21.projekat.view
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,8 @@ class FragmentPitanje(
     private fun popuniAdapter(dosadasnjiOdgovori: List<Odgovor>) {
         val toast = Toast.makeText(context,"Otvoreno pitanje", Toast.LENGTH_SHORT)
         toast.show()
+//        if (dosadasnjiOdgovori.isEmpty())
+//            Log.e("PORUKA","NEMA ODGOVORA A TREBA IH BITI")
         listaOdgovoraAdapter = OdgovorAdapter(view!!.context,android.R.layout.simple_list_item_1,pitanje.opcije,kvizTaken,
             pitanje, dosadasnjiOdgovori,brojPitanja,false,parentFragment!!,tag!!)
         listaOdgovora.adapter = listaOdgovoraAdapter

@@ -1,15 +1,12 @@
 package ba.etf.rma21.projekat
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ba.etf.rma21.projekat.data.AppDatabase
-import ba.etf.rma21.projekat.data.dao.GrupaDao
-import ba.etf.rma21.projekat.data.models.Account
 import ba.etf.rma21.projekat.data.models.ApiConfig
 import ba.etf.rma21.projekat.data.repositories.*
 import kotlinx.coroutines.Dispatchers
@@ -135,7 +132,7 @@ class DBTests {
     fun t03_checkUpdateWorks() = runBlocking {
         val prije = DBRepository.updateNow()
         assertThat(prije, equalTo(false))
-        assertThat(PredmetIGrupaRepository.upisiUGrupu(1), `is`(true))
+        PredmetIGrupaRepository.upisiUGrupu(1)
         val kt = TakeKvizRepository.zapocniKviz(1)
         assertThat(kt, notNullValue())
         ktid = kt!!.id
@@ -145,14 +142,14 @@ class DBTests {
 
     @Test
     fun t04_postaviOdgovor() = runBlocking {
-        val postotak = OdgovorRepository.postaviOdgovorKvizDB( ktid, 1, 0)
+        val postotak = OdgovorRepository.postaviOdgovorKviz( ktid, 1, 0)
         assertThat(postotak, equalTo(50))
         executeCountAndCheck(countOdgovor, "broj_odgovora", 1)
     }
 
     @Test
     fun t05_ponovljeniOdgovorSeNeUpisuje() = runBlocking {
-        val postotak = OdgovorRepository.postaviOdgovorKvizDB( ktid, 1, 0)
+        val postotak = OdgovorRepository.postaviOdgovorKviz( ktid, 1, 0)
         assertThat(postotak, equalTo(50))
         executeCountAndCheck(countOdgovor, "broj_odgovora", 1)
     }
@@ -178,6 +175,4 @@ class DBTests {
         executeCountAndCheck(countKviz, "broj_kvizova", 0)
         executeCountAndCheck(countGrupa, "broj_grupa", 0)
     }
-
-
 }

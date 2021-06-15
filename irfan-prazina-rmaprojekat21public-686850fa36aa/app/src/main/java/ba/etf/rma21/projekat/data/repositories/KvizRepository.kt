@@ -3,7 +3,6 @@ package ba.etf.rma21.projekat.data.repositories
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import ba.etf.rma21.projekat.data.AppDatabase
 import ba.etf.rma21.projekat.data.models.ApiAdapter
@@ -23,18 +22,18 @@ object KvizRepository {
         context=_context
     }
 
-    suspend fun getAll(): List<Kviz> {
+    suspend fun getAllApi(): List<Kviz> {
         return withContext(Dispatchers.IO) {
             var response = ApiAdapter.retrofit.dajSveKvizove()
             var responseBody: List<Kviz>? = response.body()
             if (responseBody == null) {
                 responseBody = mutableListOf()
-            } else responseBody.forEach { kviz -> popuniPredmeteZaKviz(kviz) }
+            } else responseBody.forEach { kviz -> popuniPredmeteZaKvizApi(kviz) }
             return@withContext responseBody!!
         }
     }
 
-    private suspend fun popuniPredmeteZaKviz(kviz: Kviz) {
+    private suspend fun popuniPredmeteZaKvizApi(kviz: Kviz) {
         val grupeZaKviz = ApiAdapter.retrofit.dajGrupeZaKviz(kviz.id).body()
         val kvizPredmeti = mutableListOf<String>()
         grupeZaKviz!!.forEach { grupa ->
@@ -50,7 +49,7 @@ object KvizRepository {
         }
     }
 
-        suspend fun getById(id: Int): Kviz? {
+        suspend fun getByIdApi(id: Int): Kviz? {
             return withContext(Dispatchers.IO) {
                 try{
                     var response = ApiAdapter.retrofit.dajKviz(id)
@@ -63,12 +62,12 @@ object KvizRepository {
             }
         }
 
-        suspend fun getByIdDB(idKviza: Int): Kviz {
+        suspend fun getById(idKviza: Int): Kviz {
             val db = AppDatabase.getInstance(context)
             return db.kvizDao().getKviz(idKviza)
         }
 
-        suspend fun getUpisani(): List<Kviz> {
+        suspend fun getUpisaniApi(): List<Kviz> {
             return withContext(Dispatchers.IO) {
                 val idStudenta = AccountRepository.getHash()
                 val upisaniKvizovi = mutableListOf<Kviz>()
@@ -85,13 +84,13 @@ object KvizRepository {
                             upisaniKvizovi.addAll(kvizoviZaGrupu)
                     }
                 }
-                upisaniKvizovi.forEach { kviz -> popuniPredmeteZaKviz(kviz) }
+                upisaniKvizovi.forEach { kviz -> popuniPredmeteZaKvizApi(kviz) }
 
                 return@withContext upisaniKvizovi.distinctBy { k -> k.id }
             }
         }
 
-        suspend fun getUpisaniDB(): List<Kviz> {
+        suspend fun getUpisani(): List<Kviz> {
             return withContext(Dispatchers.IO) {
                 val db = AppDatabase.getInstance(context)
                 return@withContext db.kvizDao().getAll()

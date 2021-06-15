@@ -27,4 +27,13 @@ interface AccountDao {
 
     @Query("UPDATE Account SET lastUpdate=(:newUpdate) WHERE id=0")
     suspend fun setLastUpdate(newUpdate: String)
+
+//    @Query("DELETE FROM Account;" +
+//            "DELETE FROM Grupa;" +
+//            "DELETE FROM Predmet;" +
+//            "DELETE FROM Kviz;" +
+//            "DELETE FROM KvizTaken;" +
+//            "DELETE FROM Pitanje;" +
+//            "DELETE FROM Odgovor;")
+//    suspend fun deleteAllData()
 }

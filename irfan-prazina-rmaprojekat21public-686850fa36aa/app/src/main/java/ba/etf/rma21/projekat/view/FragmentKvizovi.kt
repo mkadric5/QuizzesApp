@@ -2,6 +2,7 @@ package ba.etf.rma21.projekat.view
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,15 +47,6 @@ class FragmentKvizovi: Fragment() {
 
         kvizAdapter = KvizAdapter(listOf()){ kviz->
             pitanjaKvizViewModel.otvoriPokusaj(::openPokusajFragment,kviz)
-//                val pokusajFragment = FragmentPokusaj.newInstance(
-//                        pitanjaKvizViewModel.dajPitanjaZaKviz(kviz))
-//                openPokusajFragment(pokusajFragment, kviz.naziv)
-//            if (kviz.datumRada == null && kviz.osvojeniBodovi == null){
-//                if (kviz.datumKraj < Calendar.getInstance().time)
-//                    (activity as MainActivity).hidePokusajItems()
-//                else (activity as MainActivity).showPokusajItems()
-//            }
-//            else (activity as MainActivity).hidePokusajItems()
         }
         listaKvizova.layoutManager = GridLayoutManager(context!!,2)
         listaKvizova.addItemDecoration(SpaceItemDecoration(5))
@@ -71,7 +63,7 @@ class FragmentKvizovi: Fragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val toast = Toast.makeText(context,"Dohvacanje kvizova",Toast.LENGTH_SHORT)
                 toast.show()
-                kvizListViewModel.showKvizes(::updateKvizove,filterKvizova.selectedItem.toString(),context!!.applicationContext)
+                kvizListViewModel.showKvizes(::updateKvizove,filterKvizova.selectedItem.toString())
             }
         }
 
@@ -85,15 +77,18 @@ class FragmentKvizovi: Fragment() {
         transaction.commit()
     }
 
-    private fun openPokusajFragment(kvizTaken: KvizTaken?, pitanja: List<Pitanje>,kviz: Kviz, predatKviz: Boolean) {
+    private fun openPokusajFragment(kvizTaken: KvizTaken?, pitanja: List<Pitanje>,kviz: Kviz) {
         if (filterKvizova.selectedItem.toString() != "Svi kvizovi") {
             val toast = Toast.makeText(context,"Otvaranje kviza",Toast.LENGTH_SHORT)
             toast.show()
-            val pokusajFragment = FragmentPokusaj.newInstance(kvizTaken, pitanja,predatKviz)
+            val pokusajFragment = FragmentPokusaj.newInstance(kvizTaken, pitanja,kviz.predat)
             openPokusajFragmentInstance(pokusajFragment, kviz.naziv)
-            if (predatKviz)
+            if (kviz.predat)
                 (activity as MainActivity).hidePokusajItems()
-            else (activity as MainActivity).showPokusajItems()
+            else {
+                    Log.e("INFO O KVIZU",kviz.toString())
+                (activity as MainActivity).showPokusajItems()
+            }
         }
     }
 

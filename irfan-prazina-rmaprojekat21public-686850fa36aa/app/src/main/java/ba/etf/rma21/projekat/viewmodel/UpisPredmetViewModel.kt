@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 class UpisPredmetViewModel {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -22,6 +23,7 @@ class UpisPredmetViewModel {
             actionPredmeti.invoke(dajPredmeteZaGodinu(godina))
         }
     }
+
 
     private suspend fun dajPredmeteZaGodinu(godina: Int): List<Predmet> {
         return PredmetIGrupaRepository.dajNeupisanePredmeteZaGodinu(godina)

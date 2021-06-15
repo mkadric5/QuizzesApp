@@ -3,7 +3,6 @@ package ba.etf.rma21.projekat.data.repositories
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import ba.etf.rma21.projekat.data.AppDatabase
 import ba.etf.rma21.projekat.data.models.ApiAdapter
@@ -32,6 +31,7 @@ object TakeKvizRepository {
                     if (responseBody != null)
                         responseBody.KvizId = idKviza
                     val db = AppDatabase.getInstance(context)
+                    //Ubacujemo kvizTaken u bazu
                     if (!db.kvizTakenDao().getAll().any { kt -> kt.KvizId == idKviza })
                         db.kvizTakenDao().insertKvizTaken(responseBody)
                     return@withContext responseBody
@@ -46,7 +46,7 @@ object TakeKvizRepository {
 
     suspend fun dajPokusajZaKviz(idKviza: Int): KvizTaken? {
         return withContext(Dispatchers.IO) {
-            val pocetiKvizovi = getPocetiKvizoviDB()
+            val pocetiKvizovi = getPocetiKvizovi()
             if (pocetiKvizovi.isEmpty())
                 return@withContext zapocniKviz(idKviza)
             else {
@@ -58,7 +58,7 @@ object TakeKvizRepository {
         }
     }
 
-        suspend fun getPocetiKvizovi(): List<KvizTaken>? {
+        suspend fun getPocetiKvizoviApi(): List<KvizTaken>? {
             return withContext(Dispatchers.IO) {
                 try{
                     val response = ApiAdapter.retrofit.dajSvePokusaje()
@@ -74,7 +74,7 @@ object TakeKvizRepository {
         }
 
 
-    suspend fun getPocetiKvizoviDB(): List<KvizTaken> {
+    suspend fun getPocetiKvizovi(): List<KvizTaken> {
         return withContext(Dispatchers.IO) {
             val db = AppDatabase.getInstance(context)
             DBRepository.updateNow()
@@ -82,10 +82,10 @@ object TakeKvizRepository {
         }
     }
 
-    suspend fun dajPokusajZaKvizDB(idKviza: Int): KvizTaken {
-        return withContext(Dispatchers.IO) {
-            val db = AppDatabase.getInstance(context)
-            return@withContext db.kvizTakenDao().getKvizTakenZaKviz(idKviza)
-        }
-    }
+//    suspend fun dajPokusajZaKvizDB(idKviza: Int): KvizTaken {
+//        return withContext(Dispatchers.IO) {
+//            val db = AppDatabase.getInstance(context)
+//            return@withContext db.kvizTakenDao().getKvizTakenZaKviz(idKviza)
+//        }
+//    }
 }

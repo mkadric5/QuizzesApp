@@ -20,7 +20,7 @@ class KvizListViewModel {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun showKvizes(actionKvizes: ((kvizes: List<Kviz>) -> Unit),
-                   filterNaziv: String, context: Context) {
+                   filterNaziv: String) {
         val pKVM = PitanjeKvizViewModel()
         val date = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -28,18 +28,18 @@ class KvizListViewModel {
             "Svi moji kvizovi" -> {
                 scope.launch {
                     DBRepository.updateNow()
-                    val kvizovi = KvizRepository.getUpisaniDB()
+                    val kvizovi = KvizRepository.getUpisani()
                     kvizovi.forEach { k ->
-                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanjaApi(k.id))
                     }
                     actionKvizes.invoke(kvizovi)
                 }
             }
             "Svi kvizovi" -> {
                 scope.launch {
-                    val kvizovi = KvizRepository.getAll()
+                    val kvizovi = KvizRepository.getAllApi()
                     kvizovi.forEach { k ->
-                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanjaApi(k.id))
                     }
                     actionKvizes.invoke(kvizovi)
                 }
@@ -47,9 +47,9 @@ class KvizListViewModel {
             "Urađeni kvizovi" -> {
                 scope.launch {
                     DBRepository.updateNow()
-                    val kvizovi = KvizRepository.getUpisaniDB()
+                    val kvizovi = KvizRepository.getUpisani()
                     kvizovi.forEach { k ->
-                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanja(k.id))
+                        k.predat = pKVM.isPredatKviz(k,PitanjeKvizRepository.getPitanjaApi(k.id))
                     }
                     actionKvizes.invoke(kvizovi.filter { k -> k.predat })
                 }
@@ -57,7 +57,7 @@ class KvizListViewModel {
             "Budući kvizovi" -> {
                 scope.launch {
                     DBRepository.updateNow()
-                    val kvizovi = KvizRepository.getUpisaniDB()
+                    val kvizovi = KvizRepository.getUpisani()
                     actionKvizes.invoke(kvizovi.filter { k -> LocalDate.parse(k.datumPocetak,formatter) > date })
 
                 }
@@ -65,7 +65,7 @@ class KvizListViewModel {
             "Prošli kvizovi" -> {
                 scope.launch {
                     DBRepository.updateNow()
-                    val kvizovi = KvizRepository.getUpisaniDB()
+                    val kvizovi = KvizRepository.getUpisani()
                     actionKvizes.invoke(kvizovi.filter { k -> k.datumKraj != null && date > LocalDate.parse(k.datumKraj,formatter) })
                 }
             }

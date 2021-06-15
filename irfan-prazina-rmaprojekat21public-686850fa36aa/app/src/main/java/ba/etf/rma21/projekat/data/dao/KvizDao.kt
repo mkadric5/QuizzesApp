@@ -17,6 +17,9 @@ interface KvizDao {
     @Query("DELETE FROM Kviz")
     suspend fun deleteAll()
 
+    @Query("DELETE FROM Kviz WHERE id NOT IN (:pocetiKvizoviId)")
+    suspend fun deleteAllExcept(pocetiKvizoviId: List<Int>)
+
     @Query("UPDATE Kviz SET predan=(:predanTrue) WHERE id=(:idKviza)")
     suspend fun oznaciKaoUradjen(idKviza: Int, predanTrue: Boolean)
 

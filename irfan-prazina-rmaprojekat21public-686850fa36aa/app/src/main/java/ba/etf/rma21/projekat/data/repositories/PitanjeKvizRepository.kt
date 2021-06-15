@@ -12,27 +12,31 @@ import kotlinx.coroutines.withContext
 object PitanjeKvizRepository {
 
     private lateinit var context: Context
+    private var maxId: Int = 0
 
     fun setContext(_context: Context){
         context=_context
     }
 
-        suspend fun getPitanja(idKviza: Int): List<Pitanje> {
+        suspend fun getPitanjaApi(idKviza: Int): List<Pitanje> {
             return withContext(Dispatchers.IO) {
-                //try{
+                try{
                     val response = ApiAdapter.retrofit.dajPitanjaZaKviz(idKviza)
                     val pitanjaZaKviz = response.body()!!
-                    pitanjaZaKviz.forEach { p -> p.kvizId = idKviza }
-                    return@withContext pitanjaZaKviz.distinctBy { p -> p.id }
-                //}
-//                catch(e: Exception) {
-//                    println("Greska pri pozivu servisa")
-//                    return@withContext mutableListOf<Pitanje>()
-//                }
+                    pitanjaZaKviz.forEach { p ->
+                        p.idBaza = maxId+1
+                        maxId+= 1
+                        p.kvizId = idKviza }
+                    return@withContext pitanjaZaKviz
+                }
+                catch(e: Exception) {
+                    println("Greska pri pozivu servisa")
+                    return@withContext mutableListOf<Pitanje>()
+                }
             }
         }
 
-        suspend fun getPitanjaDB(idKviza: Int): List<Pitanje> {
+        suspend fun getPitanja(idKviza: Int): List<Pitanje> {
             return withContext(Dispatchers.IO) {
                 val db = AppDatabase.getInstance(context)
                 return@withContext db.pitanjeDao().getPitanjaZaKviz(idKviza)
